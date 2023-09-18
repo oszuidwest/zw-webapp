@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ZuidWest Webapp
  * Description: Generates a manifest.json using wp-json API and uses the site icon set in the Customizer.
- * Version: 1.0
+ * Version: 0.1
  * Author: Raymon Mens
  */
 
