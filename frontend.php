@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 // Link to the Manifest in the theme
 add_action('wp_head', 'add_manifest_link');
 
