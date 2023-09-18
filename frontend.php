@@ -9,5 +9,5 @@ function add_manifest_link() {
     echo '<meta name="application-name" content="' . esc_attr(get_bloginfo('name')) . '"/>';
     echo '<meta name="theme-color" content="#1f2937"/>';
     echo '<link rel="manifest" href="' . esc_url(get_rest_url(null, '/webapp/manifest/')) . '"/>';
-    echo '<link rel="apple-touch-startup-image" href="' . plugins_url('splash-test.png', __FILE__) . '"/>';
+    echo '<link rel="apple-touch-startup-image" href="' . plugins_url('img/splash-test.png', __FILE__) . '"/>';
 }
