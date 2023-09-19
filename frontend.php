@@ -4,10 +4,5 @@ add_action('wp_head', 'add_manifest_link');
 
 function add_manifest_link() {
     
-    echo '<meta name="mobile-web-app-capable" content="yes"/>' . "\n";
-    echo '<meta name="apple-touch-fullscreen" content="yes"/>' . "\n";
-    echo '<meta name="application-name" content="' . esc_attr(get_bloginfo('name')) . '"/>' . "\n";
     echo '<meta name="theme-color" content="#1f2937"/>' . "\n";
-    echo '<link rel="manifest" href="' . esc_url(get_rest_url(null, '/webapp/manifest/')) . '"/>' . "\n";
-    echo '<link rel="apple-touch-startup-image" href="' . plugins_url('img/splash-test.png', __FILE__) . '"/>' . "\n";
 }
