@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ZuidWest Webapp
  * Description: Integrates Progressier PWA
- * Version: 1.2
+ * Version: 1.0
  * Author: Raymon Mens
  */
 
