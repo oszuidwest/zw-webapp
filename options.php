@@ -4,7 +4,6 @@
 function zw_webapp_add_admin_menu() {
     add_options_page('ZuidWest Webapp', 'ZuidWest Webapp', 'manage_options', 'zw_webapp', 'zw_webapp_options_page');
 }
-
 add_action('admin_menu', 'zw_webapp_add_admin_menu');
 
 // Register settings
@@ -36,14 +35,12 @@ function zw_webapp_settings_init() {
         );
     }
 }
-
 add_action('admin_init', 'zw_webapp_settings_init');
 
 function zw_webapp_settings_render($args) {
     $options = get_option('zw_webapp_settings');
-    ?>
-    <input type='text' name='zw_webapp_settings[<?php echo $args[0]; ?>]' value='<?php echo $options[$args[0]]; ?>'>
-    <?php
+    $field_value = isset($options[$args[0]]) ? esc_attr($options[$args[0]]) : '';
+    echo "<input type='text' name='zw_webapp_settings[" . esc_attr($args[0]) . "]' value='" . $field_value . "'>";
 }
 
 function zw_webapp_settings_section_callback() {
