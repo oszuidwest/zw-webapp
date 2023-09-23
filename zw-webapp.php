@@ -7,3 +7,4 @@
  */
 
 require_once plugin_dir_path(__FILE__) . 'frontend.php';
+require_once plugin_dir_path(__FILE__) . 'push.php';
