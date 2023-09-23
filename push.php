@@ -28,32 +28,42 @@ function send_push_to_api($post_id) {
     $title_prefix = "Nieuws";
     $title = empty($yoast_primary_term) ? $title_prefix : "{$title_prefix} | {$yoast_primary_term}";
 
-    $response = wp_remote_post("https://progressier.app/xxxxxxx/send", [
+    $response = wp_remote_post("https://progressier.app/<?php echo get_option("zw_webapp_settings")["progressier_id"]; ?>/send", [
         'headers' => [
-            'Authorization' => 'Bearer xxxxxx',
+            'Authorization' => 'Bearer <?php echo get_option("zw_webapp_settings")["auth_token"]; ?>',
             'Content-Type' => 'application/json',
         ],
         'body' => json_encode([
             "recipients" => new stdClass(),
             "url" => get_permalink($post_id),
             "title" => $title,
-            "body" => get_post_field('post_title', $post_id),
-        ]),
-        'method' => 'POST',
-        'data_format' => 'body',
+            "body" => get_post_field('post_excerpt', $post_id) ?: get_post_field('post_content', $post_id)
+        ])
     ]);
 
-    $response_body = json_decode(wp_remote_retrieve_body($response), true);
-    if ($response_body['status'] ?? null === 'success') add_post_meta($post_id, 'push_sent', '1', true);
+    if (is_wp_error($response)) {
+        return set_debug_message('Error sending push: ' . $response->get_error_message());
+    }
+
+    $response_code = wp_remote_retrieve_response_code($response);
+    $response_body = wp_remote_retrieve_body($response);
+
+    if (200 !== $response_code) {
+        return set_debug_message("Error sending push: {$response_code} - {$response_body}");
+    }
+
+    update_post_meta($post_id, 'push_sent', true);
+    set_debug_message('Push sent successfully');
 }
 
-function set_debug_message($msg) {
-    set_transient('push_notif_debug_msg', $msg, 60);
+function set_debug_message($message) {
+    update_option('zw_webapp_debug_msg', $message);
 }
 
 function show_push_notif_debug_msg() {
-    if ($msg = get_transient('push_notif_debug_msg')) {
-        echo "<div class='notice notice-info is-dismissible'><p><strong>Push Notification Debug:</strong> {$msg}</p></div>";
-        delete_transient('push_notif_debug_msg');
+    $message = get_option('zw_webapp_debug_msg');
+    if ($message) {
+        echo "<div class='notice notice-info'><p>{$message}</p></div>";
+        delete_option('zw_webapp_debug_msg');
     }
 }
