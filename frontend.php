@@ -13,7 +13,7 @@ function add_manifest_link() {
     $script_url = "https://progressier.app/{$progressier_id}/script.js";
 
     // Add the manifest link tag
-    echo '<link rel="manifest" href="' . esc_url($manifest_url) . '"/>' . "\\n";
-    echo '<script defer src="' . esc_url($script_url) . '"></script>' . "\\n";
-    echo '<meta name="theme-color" content="' . esc_attr($theme_color) . '"/>' . "\\n";
+    echo '<link rel="manifest" href="' . esc_url($manifest_url) . '"/>';
+    echo '<script defer src="' . esc_url($script_url) . '"></script>';
+    echo '<meta name="theme-color" content="' . esc_attr($theme_color) . '"/>';
 }
