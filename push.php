@@ -25,7 +25,7 @@ function send_push_to_api($post_id) {
         $yoast_primary_term = $terms && !is_wp_error($terms) ? $terms[0]->name : '';
     }
     
-    $title_prefix = "Nieuws";
+    $title_prefix = "Nieuws"; //TODO: Make this reflect the post ranks 'Leestip' and 'Breaking'
     $title = empty($yoast_primary_term) ? $title_prefix : "{$title_prefix} | {$yoast_primary_term}";
 
     $response = wp_remote_post("https://progressier.app/" . get_option("zw_webapp_settings")["progressier_id"] . "/send", [
