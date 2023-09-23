@@ -28,9 +28,9 @@ function send_push_to_api($post_id) {
     $title_prefix = "Nieuws";
     $title = empty($yoast_primary_term) ? $title_prefix : "{$title_prefix} | {$yoast_primary_term}";
 
-    $response = wp_remote_post("https://progressier.app/<?php echo get_option("zw_webapp_settings")["progressier_id"]; ?>/send", [
+    $response = wp_remote_post("https://progressier.app/" . get_option("zw_webapp_settings")["progressier_id"] . "/send", [
         'headers' => [
-            'Authorization' => 'Bearer <?php echo get_option("zw_webapp_settings")["auth_token"]; ?>',
+            'Authorization' => 'Bearer ' . get_option("zw_webapp_settings")["auth_token"],
             'Content-Type' => 'application/json',
         ],
         'body' => json_encode([
