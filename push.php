@@ -5,7 +5,7 @@ add_action('send_push_notification', 'send_push_to_api');
 add_action('admin_notices', 'show_push_notif_debug_msg');
 
 function schedule_push_notification_on_publish_or_update($post_id, $post, $update) {
-    if ('post' !== $post->post_type) return set_debug_message('Not a post');
+    if ('post' !== $post->post_type) return set_debug_message('Not a post'); // TODO: only show debug messages if debug is enabled
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return set_debug_message('Doing autosave');
     if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) return set_debug_message('Post not published or is in trash');
     if (!get_field('push_post', $post_id)) return set_debug_message('ACF push_post field is not set to true');

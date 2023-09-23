@@ -17,3 +17,5 @@ function add_manifest_link() {
     echo '<script defer src="' . esc_url($script_url) . '"></script>' . "\n";
     echo '<meta name="theme-color" content="' . esc_attr($theme_color) . '"/>' . "\n";
 }
+
+// TODO: What if it's empty?
