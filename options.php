@@ -59,8 +59,11 @@ function zw_webapp_settings_field_callback($args) {
     switch ($args['id']) {
         case 'theme_color':
         case 'progressier_id':
-        case 'auth_token':
             echo "<input type='text' name='zw_webapp_settings[" . esc_attr($args['id']) . "]' value='" . $field_value . "'>";
+            break;
+
+        case 'auth_token':
+            echo "<input type='password' name='zw_webapp_settings[" . esc_attr($args['id']) . "]' value='" . $field_value . "' autocomplete='off'>";
             break;
 
         case 'show_push_debug':
