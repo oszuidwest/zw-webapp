@@ -44,9 +44,13 @@ function send_push_to_api($post_id) {
 
     $image_url = get_featured_image_url($post_id);
 
+    // Append the UTM source parameter to the URL
+    $base_url = get_permalink($post_id);
+    $utm_url = add_query_arg('utm_source', 'push', $base_url);
+
     $body_content = [
         "recipients" => new stdClass(),
-        "url" => get_permalink($post_id),
+        "url" => $utm_url,
         "title" => $title,
         "body" => get_the_title($post_id),
     ];
