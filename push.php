@@ -38,8 +38,17 @@ function send_push_to_api($post_id) {
         $terms = get_the_terms($post_id, 'regio');
         $yoast_primary_term = $terms && !is_wp_error($terms) ? $terms[0]->name : '';
     }
+
+    $post_rank = get_field('post_ranking', $post_id);
     
-    $title_prefix = "Nieuws"; //TODO: Make this reflect the post_ranks like 'Breaking' and 'Leestip'
+    if (in_array(1, $post_rank)) {
+        $title_prefix = 'Breaking';
+    } elseif (in_array(3, $post_rank)) {
+        $title_prefix = 'Leestip';
+    } else {
+        $title_prefix = 'Nieuws';
+    }
+
     $title = empty($yoast_primary_term) ? $title_prefix : "{$title_prefix} | {$yoast_primary_term}";
 
     $image_url = get_featured_image_url($post_id);
