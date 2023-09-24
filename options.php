@@ -21,7 +21,8 @@ function zw_webapp_settings_init() {
     $fields = [
         ['theme_color', 'Theme Color'],
         ['progressier_id', 'Progressier ID'],
-        ['auth_token', 'Authorization Token']
+        ['auth_token', 'Authorization Token'],
+        ['show_push_debug', 'Show push debug']
     ];
 
     foreach ($fields as $field) {
@@ -41,7 +42,14 @@ add_action('admin_init', 'zw_webapp_settings_init');
 function zw_webapp_settings_render($args) {
     $options = get_option('zw_webapp_settings');
     $field_value = isset($options[$args[0]]) ? esc_attr($options[$args[0]]) : '';
-    echo "<input type='text' name='zw_webapp_settings[" . esc_attr($args[0]) . "]' value='" . $field_value . "'>";
+    
+    if ($args[0] == 'show_push_debug') {
+        $checked = $field_value ? 'checked' : '';
+        echo "<input type='checkbox' name='zw_webapp_settings[show_push_debug]' value='1' $checked>";
+    } else {
+        echo "<input type='text' name='zw_webapp_settings[" . esc_attr($args[0]) . "]' value='" . $field_value . "'>";
+    }
+
 }
 
 // Callback for settings section (can be expanded if needed)

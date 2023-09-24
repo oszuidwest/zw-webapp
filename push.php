@@ -57,6 +57,9 @@ function send_push_to_api($post_id) {
 }
 
 function set_debug_message($message) {
+    $options = get_option('zw_webapp_settings');
+    if (!isset($options['show_push_debug']) || !$options['show_push_debug']) return;
+
     update_option('zw_webapp_debug_msg', $message);
 }
 
