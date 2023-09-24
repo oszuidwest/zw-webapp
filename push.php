@@ -37,7 +37,7 @@ function send_push_to_api($post_id) {
             "recipients" => new stdClass(),
             "url" => get_permalink($post_id),
             "title" => $title,
-            "body" => get_post_field('post_excerpt', $post_id) ?: get_post_field('post_content', $post_id)
+            "body" => get_the_title($post_id)
         ])
     ]);
 
