@@ -76,7 +76,7 @@ function send_push_to_api($post_id) {
         "recipients" => new stdClass(),
         "url" => $utm_url,
         "title" => $title,
-        "body" => get_the_title($post_id),
+        "body" => wp_specialchars_decode(get_the_title($post_id), ENT_QUOTES),
     ];
 
     if ($image_url) {
