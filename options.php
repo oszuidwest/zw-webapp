@@ -59,7 +59,7 @@ function zw_webapp_settings_field_callback($args) {
     switch ($args['id']) {
         case 'theme_color':
         case 'progressier_id':
-            echo "<input type='text' name='zw_webapp_settings[" . esc_attr($args['id']) . "]' value='" . $field_value . "'>";
+            echo "<input type='text' name='zw_webapp_settings[" . esc_attr($args['id']) . "]' value='" . $field_value . "' autocomplete='off'>";
             break;
 
         case 'auth_token':
@@ -68,7 +68,7 @@ function zw_webapp_settings_field_callback($args) {
 
         case 'show_push_debug':
             $checked = $field_value ? 'checked' : '';
-            echo "<input type='checkbox' name='zw_webapp_settings[show_push_debug]' value='1' $checked>";
+            echo "<input type='checkbox' name='zw_webapp_settings[show_push_debug]' value='1' $checked autocomplete='off'>";
             break;
 
         default:
