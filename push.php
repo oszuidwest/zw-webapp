@@ -5,15 +5,15 @@ add_action('send_push_notification', 'send_push_to_api');
 add_action('admin_notices', 'show_push_notif_debug_msg');
 
 function schedule_push_notification_on_publish_or_update($post_id, $post, $update) {
-    if ('post' !== $post->post_type) return set_debug_message('Not a post');
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return set_debug_message('Doing autosave');
-    if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) return set_debug_message('Post not published or is in trash');
-    if (!get_field('push_post', $post_id)) return set_debug_message('ACF push_post field is not set to true');
-    if (get_post_meta($post_id, 'push_sent', true)) return set_debug_message('Push already sent');
+    if ('post' !== $post->post_type) return set_debug_message('Not pushed - Not a post');
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return set_debug_message('Not pushed - Doing autosave');
+    if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) return set_debug_message('Not pushed - Post not published or is in trash');
+    if (!get_field('push_post', $post_id)) return set_debug_message('Not pushed - The push_post field is not set to true');
+    if (get_post_meta($post_id, 'push_sent', true)) return set_debug_message('Not pushed - Push already sent');
     
     // Check if a push notification is already scheduled for this post
     if (wp_next_scheduled('send_push_notification', [$post_id])) {
-        return set_debug_message('Push notification already scheduled for this post');
+        return set_debug_message('Not pushed - Push notification already scheduled for this post');
     }
 
     wp_schedule_single_event(time() + 10, 'send_push_notification', [$post_id]);
