@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -42,25 +41,37 @@ function zw_webapp_settings_init() {
             __($field[1], 'wordpress'),
             'zw_webapp_settings_field_callback',
             'pluginPage',
-            'zw_webapp_pluginPage_section'
+            'zw_webapp_pluginPage_section',
+            ['id' => $field[0]]
         );
     }
 }
 
 add_action('admin_init', 'zw_webapp_settings_init');
 
-// Render settings
-function zw_webapp_settings_render($args) {
+/**
+ * Callback to render each settings field.
+ */
+function zw_webapp_settings_field_callback($args) {
     $options = get_option('zw_webapp_settings');
-    $field_value = isset($options[$args[0]]) ? esc_attr($options[$args[0]]) : '';
-    
-    if ($args[0] == 'show_push_debug') {
-        $checked = $field_value ? 'checked' : '';
-        echo "<input type='checkbox' name='zw_webapp_settings[show_push_debug]' value='1' $checked>";
-    } else {
-        echo "<input type='text' name='zw_webapp_settings[" . esc_attr($args[0]) . "]' value='" . $field_value . "'>";
-    }
+    $field_value = isset($options[$args['id']]) ? esc_attr($options[$args['id']]) : '';
 
+    switch ($args['id']) {
+        case 'theme_color':
+        case 'progressier_id':
+        case 'auth_token':
+            echo "<input type='text' name='zw_webapp_settings[" . esc_attr($args['id']) . "]' value='" . $field_value . "'>";
+            break;
+
+        case 'show_push_debug':
+            $checked = $field_value ? 'checked' : '';
+            echo "<input type='checkbox' name='zw_webapp_settings[show_push_debug]' value='1' $checked>";
+            break;
+
+        default:
+            echo "Invalid settings field: " . esc_html($args['id']);
+            break;
+    }
 }
 
 // Callback for settings section (can be expanded if needed)
@@ -109,5 +120,3 @@ function validate_zw_webapp_settings($value) {
 }
 
 ?>
-
-// TODO: Option to enable push debug
