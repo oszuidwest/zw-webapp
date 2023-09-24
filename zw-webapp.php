@@ -2,8 +2,8 @@
 /**
  * Plugin Name: ZuidWest Webapp
  * Description: Integrates Progressier PWA
- * Version: 1.0
- * Author: Raymon Mens
+ * Version: 1.1
+ * Author: Streekomroep ZuidWest
  */
 
 require_once plugin_dir_path(__FILE__) . 'frontend.php';
