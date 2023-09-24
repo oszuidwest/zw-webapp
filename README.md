@@ -1,6 +1,6 @@
 # ZuidWest Webapp Plugin for WordPress
 
-The ZuidWest Webapp plugin integrates the Progressier PWA into our WordPress website. It offers integration with a manifest, provides an options/settings page in the WordPress admin dashboard, and enables push notifications upon post publish or update.
+The ZuidWest Webapp plugin integrates the [Progressier PWA](https://progressier.com/) into our WordPress website. It offers integration with a manifest, provides an options/settings page in the WordPress admin dashboard, and enables push notifications upon post publish or update.
 
 ## Features
 
@@ -10,7 +10,7 @@ The ZuidWest Webapp plugin integrates the Progressier PWA into our WordPress web
 
 ## Installation
 
-⚠️ This plug-in depends on the Streekomroep WordPress theme. It specifically looks for a `regio` taxonomy and a `send_push` ACF field. It might work without it, but may need tweaking.
+⚠️ This plug-in depends on the [Streekomroep WordPress theme](https://github.com/oszuidwest/streekomroep-wp). It specifically looks for a `regio` taxonomy and a `send_push` ACF field. It might work without it, but may need tweaking.
 
 1. Download the plugin files.
 2. Upload the plugin files to the `/wp-content/plugins/` directory
