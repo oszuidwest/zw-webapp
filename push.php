@@ -39,7 +39,7 @@ function send_push_to_api($post_id) {
         $yoast_primary_term = $terms && !is_wp_error($terms) ? $terms[0]->name : '';
     }
     
-    $title_prefix = "Nieuws";
+    $title_prefix = "Nieuws"; //TODO: Make this reflect the post_ranks like 'Breaking' and 'Leestip'
     $title = empty($yoast_primary_term) ? $title_prefix : "{$title_prefix} | {$yoast_primary_term}";
 
     $image_url = get_featured_image_url($post_id);
