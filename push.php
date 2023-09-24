@@ -64,18 +64,18 @@ function send_push_to_api($post_id) {
     ]);
 
     if (is_wp_error($response)) {
-        return set_debug_message('Error sending push: ' . $response->get_error_message() . " - Body sent: " . json_encode($body_content));
+        return set_debug_message('Error sending push: ' . $response->get_error_message());
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
     $response_body = wp_remote_retrieve_body($response);
 
     if (200 !== $response_code) {
-        return set_debug_message("Error sending push: {$response_code} - {$response_body} - Body sent: " . json_encode($body_content));
+        return set_debug_message("Error sending push: {$response_code} - {$response_body}");
     }
 
     update_post_meta($post_id, 'push_sent', true);
-    set_debug_message('Push sent successfully - Body sent: ' . json_encode($body_content));
+    set_debug_message('Push sent successfully');
 }
 
 function set_debug_message($message) {
