@@ -1,0 +1,13 @@
+{
+    "name": "oszuidwest/zw-webapp",
+    "type": "wordpress-plugin",
+    "require-dev": {
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "wp-coding-standards/wpcs": "^3.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
