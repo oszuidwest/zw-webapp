@@ -13,7 +13,7 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update)
     if (get_post_meta($post_id, 'push_sent', true)) return zw_webapp_set_debug_message('Not pushed - Push already sent');
 
     // Check if a push notification is already scheduled for this post
-    if (wp_next_scheduled('send_push_notification', [$post_id]))
+    if (wp_next_scheduled('send_push_notification', [$post_id])) 
     {
         return zw_webapp_set_debug_message('Not pushed - Push notification already scheduled for this post');
     }
