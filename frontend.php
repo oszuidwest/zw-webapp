@@ -4,7 +4,8 @@
  */
 add_action('wp_head', 'add_manifest_link');
 
-function add_manifest_link() {
+function add_manifest_link() 
+    {
     $webapp_settings = get_option('zw_webapp_settings');
 
     // Check for required settings

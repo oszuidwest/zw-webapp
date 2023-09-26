@@ -3,7 +3,8 @@
 /**
  * Add the options page to the WordPress menu.
  */
-function zw_webapp_add_admin_menu() {
+function zw_webapp_add_admin_menu() 
+{
     add_options_page(
         'ZuidWest Webapp',
         'ZuidWest Webapp',
@@ -17,7 +18,8 @@ add_action('admin_menu', 'zw_webapp_add_admin_menu');
 /**
  * Register settings for the webapp.
  */
-function zw_webapp_settings_init() {
+function zw_webapp_settings_init() 
+{
     register_setting('pluginPage', 'zw_webapp_settings', 'validate_zw_webapp_settings');
 
     add_settings_section(
