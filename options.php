@@ -31,16 +31,16 @@ function zw_webapp_settings_init()
 
     // Fields for the settings
     $fields = [
-        ['theme_color', 'Theme Color'],
-        ['progressier_id', 'Progressier ID'],
-        ['auth_token', 'Authorization Token'],
-        ['show_push_debug', 'Show push debug']
+        ['theme_color', __('Theme Color', 'wordpress')],
+        ['progressier_id', __('Progressier ID', 'wordpress')],
+        ['auth_token', __('Authorization Token', 'wordpress')],
+        ['show_push_debug', __('Show push debug', 'wordpress')]
     ];
 
     foreach ($fields as $field) {
         add_settings_field(
             $field[0],
-            __($field[1], 'wordpress'),
+            $field[1],
             'zw_webapp_settings_field_callback',
             'pluginPage',
             'zw_webapp_pluginPage_section',

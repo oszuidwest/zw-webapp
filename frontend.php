@@ -18,7 +18,7 @@ function zw_webapp_add_manifest_link()
     $base_url = 'https://progressier.app/{$progressier_id}';
 
     // Output the tags
-    echo '<link rel="manifest" href="' . esc_url("{$base_url}/progressier.json") . '"/>' . "\n";
-    echo '<script defer src="' . esc_url("{$base_url}/script.js") . '"></script>' . "\n";
+    echo '<link rel="manifest" href="' . esc_url($base_url . '/progressier.json') . '"/>' . "\n";
+    echo '<script defer src="' . esc_url($base_url . '/script.js') . '"></script>' . "\n";
     echo '<meta name="theme-color" content="' . $theme_color . '"/>' . "\n";
 }
