@@ -4,7 +4,7 @@
  */
 add_action('wp_head', 'zw_webapp_add_manifest_link');
 
-function zw_webapp_add_manifest_link() 
+function zw_webapp_add_manifest_link()
 {
     $webapp_settings = get_option('zw_webapp_settings');
 
