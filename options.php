@@ -108,7 +108,7 @@ function zw_webapp_validate_settings($value)
 
     // List of fields that should not be empty
     $required_fields = ['theme_color', 'progressier_id', 'auth_token'];
-    
+
     foreach ($required_fields as $field) {
         if (empty($value[$field])) {
             // Add an error message to be displayed in the admin
@@ -118,12 +118,12 @@ function zw_webapp_validate_settings($value)
                 sprintf('Error: %s cannot be empty.', $field),
                 'error'
             );
-            
+
             // Return the old value to prevent the new empty value from being saved
             return $old_value;
         }
     }
-    
+
     // If all fields are valid, return the sanitized value
     return $value;
 }
