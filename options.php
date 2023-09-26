@@ -3,7 +3,7 @@
 /**
  * Add the options page to the WordPress menu.
  */
-function zw_webapp_add_admin_menu() 
+function zw_webapp_add_admin_menu()
 {
     add_options_page(
         'ZuidWest Webapp',
@@ -18,7 +18,7 @@ add_action('admin_menu', 'zw_webapp_add_admin_menu');
 /**
  * Register settings for the webapp.
  */
-function zw_webapp_settings_init() 
+function zw_webapp_settings_init()
 {
     register_setting('pluginPage', 'zw_webapp_settings', 'validate_zw_webapp_settings');
 
@@ -54,7 +54,8 @@ add_action('admin_init', 'zw_webapp_settings_init');
 /**
  * Callback to render each settings field.
  */
-function zw_webapp_settings_field_callback($args) {
+function zw_webapp_settings_field_callback($args)
+{
     $options = get_option('zw_webapp_settings');
     $field_value = isset($options[$args['id']]) ? esc_attr($options[$args['id']]) : '';
 
@@ -80,7 +81,8 @@ function zw_webapp_settings_field_callback($args) {
 }
 
 // Callback for settings section (can be expanded if needed)
-function zw_webapp_settings_section_callback() { 
+function zw_webapp_settings_section_callback()
+{ 
     // This can contain any additional description or content for the settings section
 }
 
