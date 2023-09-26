@@ -6,15 +6,24 @@ add_action('admin_notices', 'zw_webapp_show_debug_message');
 
 function zw_webapp_schedule_push_notification($post_id, $post, $update)
 {
-    if ('post' !== $post->post_type) return zw_webapp_set_debug_message('Not pushed - Not a post');
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return zw_webapp_set_debug_message('Not pushed - Doing autosave');
-    if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) return zw_webapp_set_debug_message('Not pushed - Post not published or is in trash');
-    if (!get_field('push_post', $post_id)) return zw_webapp_set_debug_message('Not pushed - The push_post field is not set to true');
-    if (get_post_meta($post_id, 'push_sent', true)) return zw_webapp_set_debug_message('Not pushed - Push already sent');
+    if ('post' !== $post->post_type) {
+        return zw_webapp_set_debug_message('Not pushed - Not a post');
+    }
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return zw_webapp_set_debug_message('Not pushed - Doing autosave');
+    }
+    if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) {
+        return zw_webapp_set_debug_message('Not pushed - Post not published or is in trash');
+    }
+    if (!get_field('push_post', $post_id)) {
+        return zw_webapp_set_debug_message('Not pushed - The push_post field is not set to true');
+    }
+    if (get_post_meta($post_id, 'push_sent', true)) {
+        return zw_webapp_set_debug_message('Not pushed - Push already sent');
+    }
 
     // Check if a push notification is already scheduled for this post
-    if (wp_next_scheduled('send_push_notification', [$post_id])) 
-    {
+    if (wp_next_scheduled('send_push_notification', [$post_id])) {
         return zw_webapp_set_debug_message('Not pushed - Push notification already scheduled for this post');
     }
 
@@ -33,7 +42,7 @@ function zw_webapp_get_featured_image_url($post_id)
     if (!$image_url) {
         $image_url = wp_get_attachment_image_url($thumbnail_id, 'full');
     }
-    
+
     return $image_url;
 }
 
@@ -49,7 +58,7 @@ function zw_webapp_call_api($post_id)
     }
 
     $post_rank = get_field('post_ranking', $post_id);
-    
+
     $title_prefix = '';  // Set default prefix to empty string
 
     if (in_array(1, $post_rank)) {
@@ -113,7 +122,9 @@ function zw_webapp_call_api($post_id)
 function zw_webapp_set_debug_message($message)
 {
     $options = get_option('zw_webapp_settings');
-    if (!isset($options['show_push_debug']) || !$options['show_push_debug']) return;
+    if (!isset($options['show_push_debug']) || !$options['show_push_debug']) {
+        return;
+    }
 
     update_option('zw_webapp_debug_msg', $message);
 }
@@ -122,7 +133,7 @@ function zw_webapp_show_debug_message()
 {
     $message = get_option('zw_webapp_debug_msg');
     if ($message) {
-        echo '<div class='notice notice-info'><p>{$message}</p></div>';
+        echo '<div class='notice notice - info'><p>{$message}</p></div>';
         delete_option('zw_webapp_debug_msg');
     }
 }
