@@ -12,7 +12,8 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update) {
     if (get_post_meta($post_id, 'push_sent', true)) return zw_webapp_set_debug_message('Not pushed - Push already sent');
     
     // Check if a push notification is already scheduled for this post
-    if (wp_next_scheduled('send_push_notification', [$post_id])) {
+    if (wp_next_scheduled('send_push_notification', [$post_id]))
+    {
         return zw_webapp_set_debug_message('Not pushed - Push notification already scheduled for this post');
     }
 
@@ -20,7 +21,8 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update) {
     zw_webapp_set_debug_message('Push notification scheduled');
 }
 
-function zw_webapp_get_featured_image_url($post_id) {
+function zw_webapp_get_featured_image_url($post_id)
+{
     $thumbnail_id = get_post_thumbnail_id($post_id);
     if (!$thumbnail_id) {
         return false;
@@ -34,7 +36,8 @@ function zw_webapp_get_featured_image_url($post_id) {
     return $image_url;
 }
 
-function zw_webapp_call_api($post_id) {
+function zw_webapp_call_api($post_id)
+{
     $yoast_primary_term = get_post_meta($post_id, '_yoast_wpseo_primary_regio', true) ?: '';
     if ($yoast_primary_term) {
         $term = get_term($yoast_primary_term, 'regio');
@@ -106,14 +109,16 @@ function zw_webapp_call_api($post_id) {
     zw_webapp_set_debug_message('Push sent successfully');
 }
 
-function zw_webapp_set_debug_message($message) {
+function zw_webapp_set_debug_message($message)
+{
     $options = get_option('zw_webapp_settings');
     if (!isset($options['show_push_debug']) || !$options['show_push_debug']) return;
 
     update_option('zw_webapp_debug_msg', $message);
 }
 
-function zw_webapp_show_debug_message() {
+function zw_webapp_show_debug_message()
+{
     $message = get_option('zw_webapp_debug_msg');
     if ($message) {
         echo '<div class='notice notice-info'><p>{$message}</p></div>';
