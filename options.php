@@ -71,11 +71,11 @@ function zw_webapp_settings_field_callback($args)
 
         case 'show_push_debug':
             $checked = $field_value ? 'checked' : '';
-            echo "<input type='checkbox' name='zw_webapp_settings[show_push_debug]' value='1' $checked autocomplete='off'>";
+            echo '<input type='checkbox' name='zw_webapp_settings[show_push_debug]' value='1' $checked autocomplete='off'>';
             break;
 
         default:
-            echo "Invalid settings field: " . esc_html($args['id']);
+            echo 'Invalid settings field: ' . esc_html($args['id']);
             break;
     }
 }

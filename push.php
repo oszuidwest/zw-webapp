@@ -4,7 +4,8 @@ add_action('save_post', 'zw_webapp_schedule_push_notification', 20, 3);
 add_action('send_push_notification', 'zw_webapp_call_api');
 add_action('admin_notices', 'zw_webapp_show_debug_message');
 
-function zw_webapp_schedule_push_notification($post_id, $post, $update) {
+function zw_webapp_schedule_push_notification($post_id, $post, $update)
+{
     if ('post' !== $post->post_type) return zw_webapp_set_debug_message('Not pushed - Not a post');
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return zw_webapp_set_debug_message('Not pushed - Doing autosave');
     if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) return zw_webapp_set_debug_message('Not pushed - Post not published or is in trash');
