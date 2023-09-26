@@ -29,6 +29,9 @@ jobs:
       - name: Validate PHP syntax
         run: find . -maxdepth 1 -name '*.php' -exec php --syntax-check {} +
 
+      - name: Validate composer.json
+        run: composer validate --strict
+
       - run: composer install --no-progress --prefer-dist --optimize-autoloader --no-suggest
 
       - run: vendor/bin/phpcs -q --report=checkstyle | cs2pr
