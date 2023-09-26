@@ -133,7 +133,7 @@ function zw_webapp_show_debug_message()
 {
     $message = get_option('zw_webapp_debug_msg');
     if ($message) {
-        echo '<div class='notice notice - info'><p>{$message}</p></div>';
+        echo '<div class="notice notice-info"><p>' . $message . '</p></div>';
         delete_option('zw_webapp_debug_msg');
     }
 }
