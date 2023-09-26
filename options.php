@@ -20,7 +20,7 @@ add_action('admin_menu', 'zw_webapp_add_admin_menu');
  */
 function zw_webapp_settings_init()
 {
-    register_setting('pluginPage', 'zw_webapp_settings', 'validate_zw_webapp_settings');
+    register_setting('pluginPage', 'zw_webapp_settings', 'zw_webapp_validate_settings');
 
     add_settings_section(
         'zw_webapp_pluginPage_section',
@@ -82,12 +82,13 @@ function zw_webapp_settings_field_callback($args)
 
 // Callback for settings section (can be expanded if needed)
 function zw_webapp_settings_section_callback()
-{ 
+{
     // This can contain any additional description or content for the settings section
 }
 
 // Options page rendering
-function zw_webapp_options_page() {
+function zw_webapp_options_page()
+{
     ?>
     <form action='options.php' method='post'>
         <h2>ZuidWest Webapp</h2>
@@ -101,7 +102,8 @@ function zw_webapp_options_page() {
 }
 
 // Validation for the settings
-function validate_zw_webapp_settings($value) {
+function zw_webapp_validate_settings($value)
+{
     $old_value = get_option('zw_webapp_settings');
     
     // List of fields that should not be empty
