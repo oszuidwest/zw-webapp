@@ -105,7 +105,7 @@ function zw_webapp_options_page()
 function zw_webapp_validate_settings($value)
 {
     $old_value = get_option('zw_webapp_settings');
-    
+
     // List of fields that should not be empty
     $required_fields = ['theme_color', 'progressier_id', 'auth_token'];
     
