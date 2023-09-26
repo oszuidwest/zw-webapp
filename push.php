@@ -1,26 +1,26 @@
 <?php
 
-add_action('save_post', 'schedule_push_notification_on_publish_or_update', 20, 3);
-add_action('send_push_notification', 'send_push_to_api');
-add_action('admin_notices', 'show_push_notif_debug_msg');
+add_action('save_post', 'zw_webapp_schedule_push_notification', 20, 3);
+add_action('send_push_notification', 'zw_webapp_call_api');
+add_action('admin_notices', 'zw_webapp_show_debug_message');
 
-function schedule_push_notification_on_publish_or_update($post_id, $post, $update) {
-    if ('post' !== $post->post_type) return set_debug_message('Not pushed - Not a post');
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return set_debug_message('Not pushed - Doing autosave');
-    if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) return set_debug_message('Not pushed - Post not published or is in trash');
-    if (!get_field('push_post', $post_id)) return set_debug_message('Not pushed - The push_post field is not set to true');
-    if (get_post_meta($post_id, 'push_sent', true)) return set_debug_message('Not pushed - Push already sent');
+function zw_webapp_schedule_push_notification($post_id, $post, $update) {
+    if ('post' !== $post->post_type) return zw_webapp_set_debug_message('Not pushed - Not a post');
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return zw_webapp_set_debug_message('Not pushed - Doing autosave');
+    if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) return zw_webapp_set_debug_message('Not pushed - Post not published or is in trash');
+    if (!get_field('push_post', $post_id)) return zw_webapp_set_debug_message('Not pushed - The push_post field is not set to true');
+    if (get_post_meta($post_id, 'push_sent', true)) return zw_webapp_set_debug_message('Not pushed - Push already sent');
     
     // Check if a push notification is already scheduled for this post
     if (wp_next_scheduled('send_push_notification', [$post_id])) {
-        return set_debug_message('Not pushed - Push notification already scheduled for this post');
+        return zw_webapp_set_debug_message('Not pushed - Push notification already scheduled for this post');
     }
 
     wp_schedule_single_event(time() + 10, 'send_push_notification', [$post_id]);
-    set_debug_message('Push notification scheduled');
+    zw_webapp_set_debug_message('Push notification scheduled');
 }
 
-function get_featured_image_url($post_id) {
+function zw_webapp_get_featured_image_url($post_id) {
     $thumbnail_id = get_post_thumbnail_id($post_id);
     if (!$thumbnail_id) {
         return false;
@@ -34,7 +34,7 @@ function get_featured_image_url($post_id) {
     return $image_url;
 }
 
-function send_push_to_api($post_id) {
+function zw_webapp_call_api($post_id) {
     $yoast_primary_term = get_post_meta($post_id, '_yoast_wpseo_primary_regio', true) ?: '';
     if ($yoast_primary_term) {
         $term = get_term($yoast_primary_term, 'regio');
@@ -66,7 +66,7 @@ function send_push_to_api($post_id) {
         }
     }
 
-    $image_url = get_featured_image_url($post_id);
+    $image_url = zw_webapp_get_featured_image_url($post_id);
 
     // Append the UTM source parameter to the URL
     $base_url = get_permalink($post_id);
@@ -92,28 +92,28 @@ function send_push_to_api($post_id) {
     ]);
 
     if (is_wp_error($response)) {
-        return set_debug_message('Error sending push: ' . $response->get_error_message());
+        return zw_webapp_set_debug_message('Error sending push: ' . $response->get_error_message());
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
     $response_body = wp_remote_retrieve_body($response);
 
     if (200 !== $response_code) {
-        return set_debug_message('Error sending push: {$response_code} - {$response_body}');
+        return zw_webapp_set_debug_message('Error sending push: {$response_code} - {$response_body}');
     }
 
     update_post_meta($post_id, 'push_sent', true);
-    set_debug_message('Push sent successfully');
+    zw_webapp_set_debug_message('Push sent successfully');
 }
 
-function set_debug_message($message) {
+function zw_webapp_set_debug_message($message) {
     $options = get_option('zw_webapp_settings');
     if (!isset($options['show_push_debug']) || !$options['show_push_debug']) return;
 
     update_option('zw_webapp_debug_msg', $message);
 }
 
-function show_push_notif_debug_msg() {
+function zw_webapp_show_debug_message() {
     $message = get_option('zw_webapp_debug_msg');
     if ($message) {
         echo '<div class='notice notice-info'><p>{$message}</p></div>';
