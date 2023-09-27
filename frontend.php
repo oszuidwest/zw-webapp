@@ -11,7 +11,10 @@ function zw_webapp_enqueue_scripts()
 
     if (!empty($webapp_settings['progressier_id'])) {
         $base_url = 'https://progressier.app/' . $webapp_settings['progressier_id'];
+
+        // phpcs:disable WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
         wp_enqueue_script('progressier', $base_url . '/script.js', [], false, ['strategy' => 'defer']);
+        // phpcs:enable
     }
 }
 
