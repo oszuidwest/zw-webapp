@@ -3,6 +3,7 @@
 add_action('save_post', 'zw_webapp_schedule_push_notification', 20, 3);
 add_action('send_push_notification', 'zw_webapp_call_api');
 add_action('admin_notices', 'zw_webapp_show_debug_message');
+add_filter('zw_webapp_title', 'zw_webapp_push_title', 10, 2);
 
 function zw_webapp_schedule_push_notification($post_id, $post, $update)
 {
@@ -46,8 +47,16 @@ function zw_webapp_get_featured_image_url($post_id)
     return $image_url;
 }
 
-function zw_webapp_call_api($post_id)
+function zw_webapp_push_title($title, $post_id)
 {
+    $post_rank = get_field('post_ranking', $post_id);
+    if (in_array(1, $post_rank)) {
+        return 'Breaking';
+    }
+    if (in_array(3, $post_rank)) {
+        return 'Leestip';
+    }
+
     $yoast_primary_term = get_post_meta($post_id, '_yoast_wpseo_primary_regio', true) ?: '';
     if ($yoast_primary_term) {
         $term = get_term($yoast_primary_term, 'regio');
@@ -57,27 +66,16 @@ function zw_webapp_call_api($post_id)
         $yoast_primary_term = $terms && !is_wp_error($terms) ? $terms[0]->name : '';
     }
 
-    $post_rank = get_field('post_ranking', $post_id);
-
-    $title_prefix = '';  // Set default prefix to empty string
-
-    if (in_array(1, $post_rank)) {
-        $title_prefix = 'Breaking';
-    } elseif (in_array(3, $post_rank)) {
-        $title_prefix = 'Leestip';
+    if (!empty($yoast_primary_term)) {
+        return $yoast_primary_term;
     }
 
-    // If the prefix is 'Breaking' or 'Leestip', use only the prefix
-    if ($title_prefix === 'Breaking' || $title_prefix === 'Leestip') {
-        $title = $title_prefix;
-    } else {
-        // Check if there's a prefix and yoast_primary_term, else use only the prefix or term
-        if (!empty($title_prefix) && !empty($yoast_primary_term)) {
-            $title = '{$title_prefix} | {$yoast_primary_term}';
-        } else {
-            $title = $title_prefix ?: $yoast_primary_term;
-        }
-    }
+    return '';
+}
+
+function zw_webapp_call_api($post_id)
+{
+    $title = apply_filter('zw_webapp_title', 'Nieuws', $post_id);
 
     $image_url = zw_webapp_get_featured_image_url($post_id);
 
