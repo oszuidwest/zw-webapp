@@ -2,7 +2,7 @@
 
 add_action('save_post', 'zw_webapp_schedule_push_notification', 20, 3);
 add_action('send_push_notification', 'zw_webapp_call_api');
-add_action('admin_notices', 'zw_webapp_show_debug_message');
+add_action('edit_form_top', 'zw_webapp_show_debug_message', 10, 1);
 add_filter('zw_webapp_title', 'zw_webapp_push_title', 10, 2);
 add_filter('zw_webapp_send_notification', 'zw_webapp_send_notification', 10, 2);
 
@@ -15,29 +15,29 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update)
 {
     $send_push = apply_filters('zw_webapp_send_notification', true, $post_id);
     if (!$send_push) {
-        return zw_webapp_set_debug_message('Not pushed - Filter zw_webapp_send_notification returned false');
+        return zw_webapp_set_debug_message($post_id, 'Not pushed - Filter zw_webapp_send_notification returned false');
     }
 
     if ('post' !== $post->post_type) {
-        return zw_webapp_set_debug_message('Not pushed - Not a post');
+        return zw_webapp_set_debug_message($post_id, 'Not pushed - Not a post');
     }
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return zw_webapp_set_debug_message('Not pushed - Doing autosave');
+        return zw_webapp_set_debug_message($post_id, 'Not pushed - Doing autosave');
     }
     if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) {
-        return zw_webapp_set_debug_message('Not pushed - Post not published or is in trash');
+        return zw_webapp_set_debug_message($post_id, 'Not pushed - Post not published or is in trash');
     }
     if (get_post_meta($post_id, 'push_sent', true)) {
-        return zw_webapp_set_debug_message('Not pushed - Push already sent');
+        return zw_webapp_set_debug_message($post_id, 'Not pushed - Push already sent');
     }
 
     // Check if a push notification is already scheduled for this post
     if (wp_next_scheduled('send_push_notification', [$post_id])) {
-        return zw_webapp_set_debug_message('Not pushed - Push notification already scheduled for this post');
+        return zw_webapp_set_debug_message($post_id, 'Not pushed - Push notification already scheduled for this post');
     }
 
     wp_schedule_single_event(time(), 'send_push_notification', [$post_id]);
-    zw_webapp_set_debug_message('Push notification scheduled');
+    zw_webapp_set_debug_message($post_id, 'Push notification scheduled');
 }
 
 function zw_webapp_get_featured_image_url($post_id)
@@ -111,35 +111,35 @@ function zw_webapp_call_api($post_id)
     ]);
 
     if (is_wp_error($response)) {
-        return zw_webapp_set_debug_message('Error sending push: ' . $response->get_error_message());
+        return zw_webapp_set_debug_message($post_id, 'Error sending push: ' . $response->get_error_message());
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
     $response_body = wp_remote_retrieve_body($response);
 
     if (200 !== $response_code) {
-        return zw_webapp_set_debug_message('Error sending push: {$response_code} - {$response_body}');
+        return zw_webapp_set_debug_message($post_id, 'Error sending push: ' . $response_code . ' - ' . $response_body);
     }
 
     update_post_meta($post_id, 'push_sent', true);
-    zw_webapp_set_debug_message('Push sent successfully');
+    zw_webapp_set_debug_message($post_id, 'Push sent successfully');
 }
 
-function zw_webapp_set_debug_message($message)
+function zw_webapp_set_debug_message($post_id, $message)
 {
     $options = get_option('zw_webapp_settings');
     if (!isset($options['show_push_debug']) || !$options['show_push_debug']) {
         return;
     }
 
-    update_option('zw_webapp_debug_msg', $message);
+    add_post_meta($post_id, 'zw_webapp_debug_msg', $message);
 }
 
-function zw_webapp_show_debug_message()
+function zw_webapp_show_debug_message(WP_Post $post)
 {
-    $message = get_option('zw_webapp_debug_msg');
-    if ($message) {
-        echo '<div class="notice notice-info"><p>' . $message . '</p></div>';
-        delete_option('zw_webapp_debug_msg');
+    $messages = get_post_meta($post->ID, 'zw_webapp_debug_msg');
+    if ($messages) {
+        echo '<div class="notice notice-info"><p>' . implode('<br />', $messages) . '</p></div>';
+        delete_post_meta($post->ID, 'zw_webapp_debug_msg');
     }
 }
