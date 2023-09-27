@@ -34,7 +34,7 @@ function zw_webapp_settings_init()
         ['theme_color', __('Theme Color', 'wordpress')],
         ['progressier_id', __('Progressier ID', 'wordpress')],
         ['auth_token', __('Authorization Token', 'wordpress')],
-        ['show_push_debug', __('Show push debug', 'wordpress')]
+        ['show_push_debug', __('Enable push debug', 'wordpress')]
     ];
 
     foreach ($fields as $field) {
