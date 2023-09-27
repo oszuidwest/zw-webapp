@@ -27,7 +27,7 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update)
         return zw_webapp_set_debug_message('Not pushed - Push notification already scheduled for this post');
     }
 
-    wp_schedule_single_event(time() + 10, 'send_push_notification', [$post_id]);
+    wp_schedule_single_event(time(), 'send_push_notification', [$post_id]);
     zw_webapp_set_debug_message('Push notification scheduled');
 }
 
