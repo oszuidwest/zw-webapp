@@ -44,7 +44,7 @@ function zw_webapp_get_featured_image_url($post_id)
 {
     $thumbnail_id = get_post_thumbnail_id($post_id);
     if (!$thumbnail_id) {
-        return false;
+        return null;
     }
 
     $image_url = wp_get_attachment_image_url($thumbnail_id, 'large');
@@ -96,7 +96,6 @@ function zw_webapp_call_api($post_id)
         'url' => $utm_url,
         'title' => $title,
         'body' => get_post($post_id)->post_title,
-        'image' => $image_url,
     ];
 
     if ($image_url) {
