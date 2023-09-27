@@ -78,7 +78,7 @@ function zw_webapp_push_title($title, $post_id)
         return $yoast_primary_term;
     }
 
-    return '';
+    return $title;
 }
 
 function zw_webapp_call_api($post_id)
