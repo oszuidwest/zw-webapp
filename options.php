@@ -20,7 +20,7 @@ add_action('admin_menu', 'zw_webapp_add_admin_menu');
  */
 function zw_webapp_settings_init()
 {
-    register_setting('pluginPage', 'zw_webapp_settings', 'zw_webapp_validate_settings');
+    register_setting('pluginPage', 'zw_webapp_settings', ['sanitize_callback' => 'zw_webapp_validate_settings']);
 
     add_settings_section(
         'zw_webapp_pluginPage_section',
