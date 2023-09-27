@@ -10,7 +10,7 @@ The ZuidWest Webapp plugin integrates the [Progressier PWA](https://progressier.
 
 ## Installation
 
-⚠️ This plug-in depends on the [Streekomroep WordPress theme](https://github.com/oszuidwest/streekomroep-wp). It specifically looks for a `regio` taxonomy and a `send_push` ACF field. It might work without it, but may need tweaking.
+///TODO: Add documentation about pushadapter
 
 1. Download the plugin files.
 2. Upload the plugin files to the `/wp-content/plugins/` directory
