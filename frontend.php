@@ -19,6 +19,10 @@ function zw_webapp_add_manifest_link()
 
     // Output the tags
     echo '<link rel="manifest" href="' . esc_url($base_url . '/progressier.json') . '"/>' . "\n";
-    echo '<script defer src="' . esc_url($base_url . '/script.js') . '"></script>' . "\n";
+add_action('wp_enqueue_scripts', function() {
+    global $webapp_settings;
+    $script_url = esc_url('https://progressier.app/' . $webapp_settings['progressier_id'] . '/script.js');
+    wp_enqueue_script('progressier_script', $script_url, array(), null, true);
+});
     echo '<meta name="theme-color" content="' . $theme_color . '"/>' . "\n";
 }
