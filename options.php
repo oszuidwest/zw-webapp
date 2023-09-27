@@ -127,5 +127,3 @@ function zw_webapp_validate_settings($value)
     // If all fields are valid, return the sanitized value
     return $value;
 }
-
-?>
