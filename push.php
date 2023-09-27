@@ -75,7 +75,7 @@ function zw_webapp_push_title($title, $post_id)
 
 function zw_webapp_call_api($post_id)
 {
-    $title = apply_filter('zw_webapp_title', 'Nieuws', $post_id);
+    $title = apply_filters('zw_webapp_title', 'Nieuws', $post_id);
 
     $image_url = zw_webapp_get_featured_image_url($post_id);
 
@@ -88,6 +88,7 @@ function zw_webapp_call_api($post_id)
         'url' => $utm_url,
         'title' => $title,
         'body' => get_post($post_id)->post_title,
+        'image' => $image_url,
     ];
 
     if ($image_url) {

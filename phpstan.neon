@@ -5,3 +5,5 @@ parameters:
     - options.php
     - push.php
     - zw-webapp.php
+  bootstrapFiles:
+    - vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
