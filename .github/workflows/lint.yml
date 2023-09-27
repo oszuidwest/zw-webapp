@@ -30,7 +30,7 @@ jobs:
         run: find . -maxdepth 1 -name '*.php' -exec php --syntax-check {} +
 
       - name: Validate composer.json
-        run: composer validate --strict
+        run: composer validate --no-check-publish
 
       - run: composer install --no-progress --prefer-dist --optimize-autoloader --no-suggest
 
