@@ -4,9 +4,20 @@ add_action('save_post', 'zw_webapp_schedule_push_notification', 20, 3);
 add_action('send_push_notification', 'zw_webapp_call_api');
 add_action('admin_notices', 'zw_webapp_show_debug_message');
 add_filter('zw_webapp_title', 'zw_webapp_push_title', 10, 2);
+add_filter('zw_webapp_send_notification', 'zw_webapp_send_notification', 10, 2);
+
+function zw_webapp_send_notification($do_send, $post_id)
+{
+    return get_field('push_post', $post_id);
+}
 
 function zw_webapp_schedule_push_notification($post_id, $post, $update)
 {
+    $send_push = apply_filters('zw_webapp_send_notification', true, $post_id);
+    if (!$send_push) {
+        return zw_webapp_set_debug_message('Not pushed - Filter zw_webapp_send_notification returned false');
+    }
+
     if ('post' !== $post->post_type) {
         return zw_webapp_set_debug_message('Not pushed - Not a post');
     }
@@ -15,9 +26,6 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update)
     }
     if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) {
         return zw_webapp_set_debug_message('Not pushed - Post not published or is in trash');
-    }
-    if (!get_field('push_post', $post_id)) {
-        return zw_webapp_set_debug_message('Not pushed - The push_post field is not set to true');
     }
     if (get_post_meta($post_id, 'push_sent', true)) {
         return zw_webapp_set_debug_message('Not pushed - Push already sent');
