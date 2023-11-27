@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ZuidWest Webapp
  * Description: Integrates Progressier PWA
- * Version: 1.5
+ * Version: 2.0
  * Author: Streekomroep ZuidWest
  */
 
