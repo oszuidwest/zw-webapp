@@ -6,6 +6,11 @@ add_action('edit_form_top', 'zw_webapp_show_debug_message', 10, 1);
 
 function zw_webapp_schedule_push_notification($post_id, $post, $update)
 {
+    if (defined('WP_CLI') && WP_CLI) {
+        zw_webapp_set_debug_message($post_id, 'Not pushed - Refusing to push on cli-triggered actions');
+        return;
+    }
+
     $send_push = apply_filters('zw_webapp_send_notification', true, $post_id);
     if (!$send_push) {
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Filter zw_webapp_send_notification returned false');
