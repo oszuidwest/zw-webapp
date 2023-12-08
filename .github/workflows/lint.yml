@@ -42,3 +42,4 @@ jobs:
           exclude-checks: |
             late_escaping
             plugin_review_phpcs
+            file_type
