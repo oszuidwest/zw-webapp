@@ -25,11 +25,24 @@ function zw_webapp_dashboard_widget_display() {
     echo '<h3>Recent Pushed Articles</h3>';
     if ($recent_pushed_posts->have_posts()) {
         echo '<ul>';
+
+        $today = current_time('Y-m-d');
+        $year = current_time('Y');
+
         while ($recent_pushed_posts->have_posts()) {
             $recent_pushed_posts->the_post();
+            $time = get_the_time('U');
+
+            if (gmdate('Y-m-d', $time) === $today) {
+                $relative = __('Today');
+            } elseif (gmdate('Y', $time) !== $year) {
+                $relative = date_i18n(__('M jS Y'), $time);
+            } else {
+                $relative = date_i18n(__('M jS'), $time);
+            }
+
             echo '<li class="post-item">';
-            // Use the date format from the WordPress settings, localized
-            echo '<span class="post-date">' . get_the_date(__('Y/m/d g:i a')) . '</span>';
+            echo '<span class="post-date">' . $relative . '</span>';
             echo '<a href="' . get_edit_post_link() . '">' . get_the_title() . '</a>';
             echo '</li>';
         }
