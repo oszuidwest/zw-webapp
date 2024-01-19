@@ -19,29 +19,35 @@ function zw_webapp_dashboard_widget_display() {
     $recent_pushed_posts = new WP_Query($args);
 
     // Display recent articles
+    echo '<div class="activity-block">';
     echo '<h3>Gepushte artikelen</h3>';
     if ($recent_pushed_posts->have_posts()) {
         echo '<ul>';
         while ($recent_pushed_posts->have_posts()) {
             $recent_pushed_posts->the_post();
-            echo '<li>' . get_the_title() . ' - ' . get_the_date() . '</li>';
+            echo '<li><span>' . get_the_date() . '</span> <a href="' . get_edit_post_link() . '">' . get_the_title() . '</a></li>';
         }
         echo '</ul>';
     } else {
         echo '<p>Recent niets gepusht.</p>';
     }
+    echo '</div>';
     wp_reset_postdata();
 
     // Display daily push count
+    echo '<div class="activity-block">';
     echo '<h3>Hoeveelheid pushberichten</h3>';
     $daily_push_count = zw_webapp_get_daily_push_count();
     if (!empty($daily_push_count)) {
+        echo '<ul>';
         foreach ($daily_push_count as $date => $count) {
-            echo '<p>' . esc_html($date) . ': ' . esc_html($count) . '</p>';
+            echo '<li><span>' . esc_html($date) . ': ' . esc_html($count) . '</span></li>';
         }
+        echo '</ul>';
     } else {
         echo '<p>No data available.</p>';
     }
+    echo '</div>';
 }
 
 function zw_webapp_get_daily_push_count() {
