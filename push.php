@@ -129,8 +129,8 @@ function zw_webapp_get_daily_push_count()
 
         $results = $wpdb->get_results($wpdb->prepare("
             SELECT DATE(post_date) AS push_date, COUNT(*) AS count
-            FROM {$wpdb->posts} p
-            JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+            FROM " . $wpdb->posts . " p
+            JOIN " . $wpdb->postmeta . " pm ON p.ID = pm.post_id
             WHERE pm.meta_key = 'push_sent' AND pm.meta_value = '1'
             AND post_status = 'publish' AND post_date >= %s
             GROUP BY push_date
@@ -153,4 +153,3 @@ function zw_webapp_invalidate_push_count_cache()
     $cache_key = 'zw_webapp_daily_push_count';
     wp_cache_delete($cache_key);
 }
-
