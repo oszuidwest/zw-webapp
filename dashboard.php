@@ -19,6 +19,14 @@ function zw_webapp_dashboard_widget_display() {
     );
     $recent_pushed_posts = new WP_Query($args);
 
+    // Start of the widget container
+    echo '<div class="postbox">';
+
+    // Widget title for Recent Pushed Articles
+    echo '<div class="postbox-header"><h2 class="hndle ui-sortable-handle">Recent Pushed Articles</h2></div>';
+
+    // Main content area for Recent Pushed Articles
+    echo '<div class="inside">';
     echo '<div id="zw-webapp-published-posts" class="activity-block">';
     echo '<h3>Recent Pushed Articles</h3>';
     if ($recent_pushed_posts->have_posts()) {
@@ -37,8 +45,10 @@ function zw_webapp_dashboard_widget_display() {
         echo '<p>No recent articles have been pushed.</p>';
     }
     echo '</div>';
-    wp_reset_postdata();
+    echo '</div>'; // Close main content area
 
+    // Daily Push Count
+    echo '<div class="inside">';
     echo '<div id="zw-webapp-daily-push-count" class="activity-block">';
     echo '<h3>Daily Push Count</h3>';
     $daily_push_count = zw_webapp_get_daily_push_count();
@@ -56,6 +66,12 @@ function zw_webapp_dashboard_widget_display() {
         echo '<p>No push data available.</p>';
     }
     echo '</div>';
+    echo '</div>'; // Close Daily Push Count content area
+
+    // Close widget container
+    echo '</div>';
+
+    wp_reset_postdata();
 }
 
 function zw_webapp_get_daily_push_count() {
