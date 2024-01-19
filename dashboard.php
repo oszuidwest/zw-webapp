@@ -80,3 +80,4 @@ function zw_webapp_dashboard_widget_display()
 	echo '</div>';
 
 	wp_reset_postdata();
+}
