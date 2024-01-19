@@ -64,15 +64,17 @@ function zw_webapp_get_daily_push_count() {
     $daily_push_count = wp_cache_get($cache_key);
 
     if (false === $daily_push_count) {
-        $results = $wpdb->get_results("
+        $one_week_ago = date('Y-m-d', strtotime('-1 week'));
+
+        $results = $wpdb->get_results($wpdb->prepare("
             SELECT DATE(post_date) AS push_date, COUNT(*) AS count
             FROM {$wpdb->posts} p
             JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
             WHERE pm.meta_key = 'push_sent' AND pm.meta_value = '1'
-            AND post_status = 'publish'
+            AND post_status = 'publish' AND post_date >= %s
             GROUP BY push_date
             ORDER BY push_date DESC
-        ", OBJECT_K);
+        ", $one_week_ago), OBJECT_K);
 
         $daily_push_count = array();
         foreach ($results as $result) {
