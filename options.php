@@ -94,9 +94,9 @@ function zw_webapp_options_page()
         <h2>ZuidWest Webapp</h2>
         <?php
         settings_fields('pluginPage');
-        do_settings_sections('pluginPage');
-        submit_button();
-        ?>
+    do_settings_sections('pluginPage');
+    submit_button();
+    ?>
     </form>
     <?php
 }
