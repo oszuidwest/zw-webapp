@@ -1,5 +1,7 @@
 <?php
-function zw_webapp_add_dashboard_widgets() {
+
+function zw_webapp_add_dashboard_widgets()
+{
     wp_add_dashboard_widget(
         'zw_webapp_dashboard_recent_pushes',
         'Recent Pushed Articles',
@@ -8,7 +10,8 @@ function zw_webapp_add_dashboard_widgets() {
 }
 add_action('wp_dashboard_setup', 'zw_webapp_add_dashboard_widgets');
 
-function zw_webapp_dashboard_widget_display() {
+function zw_webapp_dashboard_widget_display()
+{
     // Recent Pushed Articles
     $args = array(
         'post_type' => 'post',
@@ -74,7 +77,8 @@ function zw_webapp_dashboard_widget_display() {
     wp_reset_postdata();
 }
 
-function zw_webapp_get_daily_push_count() {
+function zw_webapp_get_daily_push_count()
+{
     global $wpdb;
     $cache_key = 'zw_webapp_daily_push_count';
     $daily_push_count = wp_cache_get($cache_key);
