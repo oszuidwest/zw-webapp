@@ -1,18 +1,17 @@
 <?php
 function zw_webapp_add_dashboard_widgets() {
     wp_add_dashboard_widget(
-        'zw_webapp_dashboard_recent_pushes',   // Widget ID
-        'Recent Pushed Articles',             // Title
-        'zw_webapp_dashboard_widget_display'  // Display function
+        'zw_webapp_dashboard_recent_pushes',
+        'Recent Pushed Articles',
+        'zw_webapp_dashboard_widget_display'
     );
 }
 add_action('wp_dashboard_setup', 'zw_webapp_add_dashboard_widgets');
 
 function zw_webapp_dashboard_widget_display() {
-    // Fetch the recent pushed articles
     $args = array(
         'post_type' => 'post',
-        'posts_per_page' => 5, // Adjust number of posts to display
+        'posts_per_page' => 5,
         'meta_key' => 'push_sent',
         'meta_value' => '1',
         'orderby' => 'date',
@@ -20,7 +19,6 @@ function zw_webapp_dashboard_widget_display() {
     );
     $recent_pushed_posts = new WP_Query($args);
 
-    // Display recent articles
     echo '<div id="zw-webapp-published-posts" class="activity-block">';
     echo '<h3>Recent Pushed Articles</h3>';
     if ($recent_pushed_posts->have_posts()) {
@@ -28,11 +26,9 @@ function zw_webapp_dashboard_widget_display() {
         while ($recent_pushed_posts->have_posts()) {
             $recent_pushed_posts->the_post();
             $time = get_the_time('U');
-            // Custom format for the date and time
             $formatted_date_time = date_i18n('j M, H:i', $time);
-
             echo '<li class="post-item">';
-            echo '<span class="post-date">' . $formatted_date_time . '</span>';
+            echo '<span class="post-date">' . $formatted_date_time . '</span> ';
             echo '<a href="' . get_edit_post_link() . '">' . get_the_title() . '</a>';
             echo '</li>';
         }
@@ -43,14 +39,12 @@ function zw_webapp_dashboard_widget_display() {
     echo '</div>';
     wp_reset_postdata();
 
-    // Display daily push count
     echo '<div id="zw-webapp-daily-push-count" class="activity-block">';
     echo '<h3>Daily Push Count</h3>';
     $daily_push_count = zw_webapp_get_daily_push_count();
     if (!empty($daily_push_count)) {
         echo '<ul>';
         foreach ($daily_push_count as $date => $count) {
-            // Format the date as per WordPress settings
             $formatted_date = date_i18n('j M', strtotime($date));
             echo '<li class="post-count-item">';
             echo '<span class="post-count-date">' . esc_html($formatted_date) . ':</span> ';
@@ -66,17 +60,19 @@ function zw_webapp_dashboard_widget_display() {
 
 function zw_webapp_get_daily_push_count() {
     global $wpdb;
-    $query = "
-        SELECT DATE(post_date) as push_date, COUNT(*) as count
-        FROM $wpdb->posts
-        WHERE ID IN (
-            SELECT post_id
-            FROM $wpdb->postmeta
-            WHERE meta_key = 'push_sent' AND meta_value = '1'
-        )
+    $results = $wpdb->get_results("
+        SELECT DATE(post_date) AS push_date, COUNT(*) AS count
+        FROM {$wpdb->posts} p
+        JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+        WHERE pm.meta_key = 'push_sent' AND pm.meta_value = '1'
+        AND post_status = 'publish'
         GROUP BY push_date
         ORDER BY push_date DESC
-        LIMIT 7";
+    ", OBJECT_K);
 
-    return $wpdb->get_results($query, OBJECT_K);
+    $daily_push_count = array();
+    foreach ($results as $result) {
+        $daily_push_count[$result->push_date] = $result->count;
+    }
+    return $daily_push_count;
 }
