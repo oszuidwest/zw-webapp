@@ -21,55 +21,45 @@ function zw_webapp_dashboard_widget_display() {
     $recent_pushed_posts = new WP_Query($args);
 
     // Display recent articles
-    echo '<div id="published-posts" class="activity-block">';
+    echo '<div id="zw-webapp-published-posts" class="activity-block">';
     echo '<h3>Recent Pushed Articles</h3>';
     if ($recent_pushed_posts->have_posts()) {
         echo '<ul>';
-
-        $today = current_time('Y-m-d');
-        $year = current_time('Y');
-
         while ($recent_pushed_posts->have_posts()) {
             $recent_pushed_posts->the_post();
             $time = get_the_time('U');
-
-            if (gmdate('Y-m-d', $time) === $today) {
-                $relative = __('Today');
-            } elseif (gmdate('Y', $time) !== $year) {
-                $relative = date_i18n(__('M jS Y'), $time);
-            } else {
-                $relative = date_i18n(__('M jS'), $time);
-            }
+            // Custom format for the date and time
+            $formatted_date_time = date_i18n('j M, H:i', $time);
 
             echo '<li class="post-item">';
-            echo '<span class="post-date">' . $relative . '</span>';
+            echo '<span class="post-date">' . $formatted_date_time . '</span>';
             echo '<a href="' . get_edit_post_link() . '">' . get_the_title() . '</a>';
             echo '</li>';
         }
         echo '</ul>';
     } else {
-        echo '<p>No recent articles.</p>';
+        echo '<p>No recent articles have been pushed.</p>';
     }
     echo '</div>';
     wp_reset_postdata();
 
     // Display daily push count
-    echo '<div id="zw-webapp-daily-push" class="activity-block">';
+    echo '<div id="zw-webapp-daily-push-count" class="activity-block">';
     echo '<h3>Daily Push Count</h3>';
     $daily_push_count = zw_webapp_get_daily_push_count();
     if (!empty($daily_push_count)) {
         echo '<ul>';
         foreach ($daily_push_count as $date => $count) {
+            // Format the date as per WordPress settings
+            $formatted_date = date_i18n('j M', strtotime($date));
             echo '<li class="post-count-item">';
-            // Format the date as per WordPress settings, localized
-            $formatted_date = date_i18n(get_option('date_format'), strtotime($date));
             echo '<span class="post-count-date">' . esc_html($formatted_date) . ':</span> ';
             echo '<span class="post-count-number">' . esc_html($count) . '</span>';
             echo '</li>';
         }
         echo '</ul>';
     } else {
-        echo '<p>No data available.</p>';
+        echo '<p>No push data available.</p>';
     }
     echo '</div>';
 }
