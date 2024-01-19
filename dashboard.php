@@ -20,7 +20,7 @@ function zw_webapp_dashboard_widget_display() {
     );
     $recent_pushed_posts = new WP_Query($args);
 
-    echo '<div id="zw-webapp-published-posts" class="activity-block">';
+    echo '<div id="published-posts" class="activity-block">';
 
     echo '<h3>Recent Pushed Articles</h3>';
 
