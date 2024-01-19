@@ -15,11 +15,19 @@ function zw_webapp_dashboard_widget_display() {
         'meta_key' => 'push_sent',
         'meta_value' => '1',
         'orderby' => 'date',
-        'order' => 'DESC'
+        'order' => 'DESC',
+        'date_query' => array(
+            array(
+                'after' => '1 week ago',
+            ),
+        ),
     );
     $recent_pushed_posts = new WP_Query($args);
 
-    echo '<div id="zw-webapp-published-posts" class="activity-block">';
+    // Start of the widget display
+    echo '<div class="postbox">';
+    echo '<div class="inside">';
+
     echo '<h3>Recent Pushed Articles</h3>';
     if ($recent_pushed_posts->have_posts()) {
         echo '<ul>';
@@ -27,7 +35,7 @@ function zw_webapp_dashboard_widget_display() {
             $recent_pushed_posts->the_post();
             $time = get_the_time('U');
             $formatted_date_time = date_i18n('j M, H:i', $time);
-            echo '<li class="post-item">';
+            echo '<li>';
             echo '<span class="post-date">' . $formatted_date_time . '</span> ';
             echo '<a href="' . get_edit_post_link() . '">' . get_the_title() . '</a>';
             echo '</li>';
@@ -36,7 +44,9 @@ function zw_webapp_dashboard_widget_display() {
     } else {
         echo '<p>No recent articles have been pushed.</p>';
     }
-    echo '</div>';
+
+    echo '</div>'; // Close the .inside div
+    echo '</div>'; // Close the .postbox div
     wp_reset_postdata();
 
     echo '<div id="zw-webapp-daily-push-count" class="activity-block">';
