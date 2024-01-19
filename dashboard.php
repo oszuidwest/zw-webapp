@@ -80,7 +80,7 @@ function zw_webapp_get_daily_push_count() {
     $daily_push_count = wp_cache_get($cache_key);
 
     if (false === $daily_push_count) {
-        $one_week_ago = date('Y-m-d', strtotime('-1 week'));
+        $one_week_ago = date('Y-m-d', strtotime('-1 month'));
 
         $results = $wpdb->get_results($wpdb->prepare("
             SELECT DATE(post_date) AS push_date, COUNT(*) AS count
