@@ -4,7 +4,7 @@ function zw_webapp_add_dashboard_widgets()
 {
     wp_add_dashboard_widget(
         'zw_webapp_dashboard_recent_pushes',
-        'Recent Pushed Articles',
+        'ZuidWest Webapp',
         'zw_webapp_dashboard_widget_display'
     );
 }
@@ -25,7 +25,7 @@ function zw_webapp_dashboard_widget_display()
 
     echo '<div id="published-posts" class="activity-block">';
 
-    echo '<h3>Recent Pushed Articles</h3>';
+    echo '<h3>Recente gepushte artikelen</h3>';
 
     if ($recent_pushed_posts->have_posts()) {
         echo '<ul>';
@@ -48,12 +48,12 @@ function zw_webapp_dashboard_widget_display()
 
         echo '</ul>';
     } else {
-        echo '<p>No recent articles have been pushed.</p>';
+        echo '<p>Er zijn recent geen artikelen gepusht.</p>';
     }
 
     echo '</div>';
 
-    // Daily Push Count
+    // Push Count
     $daily_push_count = zw_webapp_get_daily_push_count();
     echo '<div id="zw-webapp-daily-push-count" class="activity-block">';
     echo '<h3>Daily Push Count</h3>';
@@ -72,7 +72,7 @@ function zw_webapp_dashboard_widget_display()
 
         echo '</ul>';
     } else {
-        echo '<p>No push data available.</p>';
+        echo '<p>Geen data over pushberichten beschikbaar.</p>';
     }
     echo '</div>';
 
