@@ -28,7 +28,8 @@ function zw_webapp_dashboard_widget_display() {
         while ($recent_pushed_posts->have_posts()) {
             $recent_pushed_posts->the_post();
             echo '<li class="post-item">';
-            echo '<span class="post-date">' . get_the_date() . '</span>';
+            // Use the date format from the WordPress settings, localized
+            echo '<span class="post-date">' . get_the_date(__('Y/m/d g:i a')) . '</span>';
             echo '<a href="' . get_edit_post_link() . '">' . get_the_title() . '</a>';
             echo '</li>';
         }
@@ -47,7 +48,9 @@ function zw_webapp_dashboard_widget_display() {
         echo '<ul>';
         foreach ($daily_push_count as $date => $count) {
             echo '<li class="post-count-item">';
-            echo '<span class="post-count-date">' . esc_html($date) . ':</span> ';
+            // Format the date as per WordPress settings, localized
+            $formatted_date = date_i18n(get_option('date_format'), strtotime($date));
+            echo '<span class="post-count-date">' . esc_html($formatted_date) . ':</span> ';
             echo '<span class="post-count-number">' . esc_html($count) . '</span>';
             echo '</li>';
         }
