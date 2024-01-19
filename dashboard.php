@@ -55,7 +55,7 @@ function zw_webapp_dashboard_widget_display()
 
     // Push Count
     $daily_push_count = zw_webapp_get_daily_push_count();
-    echo '<div id="zw-webapp-daily-push-count" class="activity-block" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 20px;">';
+    echo '<div id="zw-webapp-daily-push-count" class="activity-block" style="padding: 10px; margin-top: 20px;">';
     echo '<h3 style="margin-bottom: 15px;">Gepushte artikelen per dag</h3>';
 
     if (!empty($daily_push_count)) {
