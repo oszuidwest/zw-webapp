@@ -59,11 +59,11 @@ function zw_webapp_dashboard_widget_display()
     echo '<h3>Daily Push Count</h3>';
 
     if (!empty($daily_push_count)) {
-        echo '<ul>';
+        echo '<ul style="list-style: none; padding-left: 0;">'; // No bullets, no padding
         foreach ($daily_push_count as $date => $count) {
             $formatted_date = date_i18n('j M', strtotime($date));
             echo sprintf(
-                '<li><span>%1$s:</span> <span>%2$s</span></li>',
+                '<li style="display: flex; justify-content: space-between; margin-bottom: 5px;"><span>%1$s:</span> <strong>%2$s</strong></li>',
                 esc_html($formatted_date),
                 esc_html($count)
             );
