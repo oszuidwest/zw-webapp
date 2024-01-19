@@ -53,28 +53,30 @@ function zw_webapp_dashboard_widget_display()
 
     echo '</div>';
 
-    // Push Count
-    $daily_push_count = zw_webapp_get_daily_push_count();
-    echo '<div id="zw-webapp-daily-push-count" class="activity-block">';
-    echo '<h3 style="margin-bottom: 15px;">Gepushte artikelen per dag</h3>';
+	// Push Count
+	$daily_push_count = zw_webapp_get_daily_push_count();
+	echo '<div id="zw-webapp-daily-push-count" class="activity-block">';
+	echo '<h3 style="margin-bottom: 15px;">Gepushte artikelen per dag</h3>';
 
-    if (!empty($daily_push_count)) {
-        echo '<ul style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; list-style: none; padding: 0;">';
+	if (!empty($daily_push_count)) {
+	    echo '<ul style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; list-style: none; padding: 0;">';
 
-        foreach ($daily_push_count as $date => $count) {
-            $formatted_date = date_i18n('j M', strtotime($date));
-            printf(
-                '<li style="background-color: #f7f7f7; padding: 8px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"><span>%1$s: %2$s pushes</span></li>',
-                esc_html($formatted_date),
-                esc_html($count)
-            );
-        }
+	    foreach ($daily_push_count as $date => $count) {
+	        $formatted_date = date_i18n('j M', strtotime($date));
+	        // Check if the count is 1 to decide between 'push' and 'pushes'
+	        $push_text = $count == 1 ? 'push' : 'pushes';
+	        printf(
+	            '<li style="background-color: #f7f7f7; padding: 8px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"><span>%1$s: %2$s %3$s</span></li>',
+	            esc_html($formatted_date),
+	            esc_html($count),
+	            esc_html($push_text)
+	        );
+	    }
 
-        echo '</ul>';
-    } else {
-        echo '<p>Geen data over pushberichten beschikbaar.</p>';
-    }
-    echo '</div>';
+	    echo '</ul>';
+	} else {
+	    echo '<p>Geen data over pushberichten beschikbaar.</p>';
+	}
+	echo '</div>';
 
-    wp_reset_postdata();
-}
+	wp_reset_postdata();
