@@ -1,4 +1,4 @@
-# ZuidWest Webapp for WordPress
+# ZuidWest Webapp
 
 The ZuidWest Webapp plugin integrates the [Progressier PWA](https://progressier.com/) into a WordPress website. It offers integration with a manifest, provides an options/settings page in the WordPress admin dashboard and enables push notifications upon post publish or update.
 
