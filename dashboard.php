@@ -9,6 +9,7 @@ function zw_webapp_add_dashboard_widgets() {
 add_action('wp_dashboard_setup', 'zw_webapp_add_dashboard_widgets');
 
 function zw_webapp_dashboard_widget_display() {
+    // Recent Pushed Articles
     $args = array(
         'post_type' => 'post',
         'posts_per_page' => 5,
@@ -19,56 +20,55 @@ function zw_webapp_dashboard_widget_display() {
     );
     $recent_pushed_posts = new WP_Query($args);
 
-    // Start of the widget container
-    echo '<div class="postbox">';
-
-    // Widget title for Recent Pushed Articles
-    echo '<div class="postbox-header"><h2 class="hndle ui-sortable-handle">Recent Pushed Articles</h2></div>';
-
-    // Main content area for Recent Pushed Articles
-    echo '<div class="inside">';
     echo '<div id="zw-webapp-published-posts" class="activity-block">';
+
     echo '<h3>Recent Pushed Articles</h3>';
+
     if ($recent_pushed_posts->have_posts()) {
         echo '<ul>';
+
         while ($recent_pushed_posts->have_posts()) {
             $recent_pushed_posts->the_post();
+
             $time = get_the_time('U');
             $formatted_date_time = date_i18n('j M, H:i', $time);
-            echo '<li class="post-item">';
-            echo '<span class="post-date">' . $formatted_date_time . '</span> ';
-            echo '<a href="' . get_edit_post_link() . '">' . get_the_title() . '</a>';
-            echo '</li>';
+            $post_edit_link = get_edit_post_link();
+            $post_title = get_the_title();
+
+            printf(
+                '<li><span>%1$s</span> <a href="%2$s">%3$s</a></li>',
+                esc_html($formatted_date_time),
+                esc_url($post_edit_link),
+                esc_html($post_title)
+            );
         }
+
         echo '</ul>';
     } else {
         echo '<p>No recent articles have been pushed.</p>';
     }
+
     echo '</div>';
-    echo '</div>'; // Close main content area
 
     // Daily Push Count
-    echo '<div class="inside">';
+    $daily_push_count = zw_webapp_get_daily_push_count();
     echo '<div id="zw-webapp-daily-push-count" class="activity-block">';
     echo '<h3>Daily Push Count</h3>';
-    $daily_push_count = zw_webapp_get_daily_push_count();
+
     if (!empty($daily_push_count)) {
         echo '<ul>';
         foreach ($daily_push_count as $date => $count) {
             $formatted_date = date_i18n('j M', strtotime($date));
-            echo '<li class="post-count-item">';
-            echo '<span class="post-count-date">' . esc_html($formatted_date) . ':</span> ';
-            echo '<span class="post-count-number">' . esc_html($count) . '</span>';
-            echo '</li>';
+            echo sprintf(
+                '<li><span>%1$s:</span> <span>%2$s</span></li>',
+                esc_html($formatted_date),
+                esc_html($count)
+            );
         }
         echo '</ul>';
     } else {
         echo '<p>No push data available.</p>';
     }
-    echo '</div>';
-    echo '</div>'; // Close Daily Push Count content area
-
-    // Close widget container
     echo '</div>';
 
     wp_reset_postdata();
