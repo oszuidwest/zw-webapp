@@ -95,6 +95,7 @@ function zw_webapp_call_api($post_id)
     }
 
     update_post_meta($post_id, 'push_sent', true);
+	zw_webapp_invalidate_push_count_cache();
     zw_webapp_set_debug_message($post_id, 'Push sent successfully');
 }
 
