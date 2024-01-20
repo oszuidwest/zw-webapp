@@ -17,7 +17,7 @@ function zw_webapp_dashboard_widget_display()
         'post_type' => 'post',
         'posts_per_page' => 5,
         'meta_key' => 'push_sent',
-        'meta_value' => '1',
+        'meta_value' => '1', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used in production with no issues.
         'orderby' => 'date',
         'order' => 'DESC'
     );
