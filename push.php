@@ -146,7 +146,7 @@ function zw_webapp_get_daily_push_count()
             $args = array(
                 'date_query'     => $date_query,
                 'post_status'    => 'publish',
-                'meta_query'     => $meta_query,
+                'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used in production with no issues
                 'posts_per_page' => -1,
             );
 
