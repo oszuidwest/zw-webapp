@@ -118,7 +118,7 @@ function zw_webapp_show_debug_message(WP_Post $post)
     }
 }
 
-function zw_webapp_get_daily_push_count() 
+function zw_webapp_get_daily_push_count()
 {
     global $wpdb;
     $cache_key = 'zw_webapp_daily_push_count';
