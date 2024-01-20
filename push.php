@@ -129,9 +129,9 @@ function zw_webapp_get_daily_push_count()
         for ($i = 0; $i <= 6; $i++) {
             $date_query = array(
                 array(
-                    'year'  => date('Y', strtotime('-' . $i . " days")),
-                    'month' => date('m', strtotime('-' . $i . " days")),
-                    'day'   => date('d', strtotime('-' . $i . " days")),
+                    'year'  => date('Y', strtotime('-' . $i . ' days')),
+                    'month' => date('m', strtotime('-' . $i . ' days')),
+                    'day'   => date('d', strtotime('-' . $i . ' days')),
                 ),
             );
 
