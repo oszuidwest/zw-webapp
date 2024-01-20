@@ -118,7 +118,8 @@ function zw_webapp_show_debug_message(WP_Post $post)
     }
 }
 
-function zw_webapp_get_daily_push_count() {
+function zw_webapp_get_daily_push_count()
+{
     $cache_key = 'zw_webapp_daily_push_count';
     $daily_push_count = wp_cache_get($cache_key);
 
