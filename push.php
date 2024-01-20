@@ -118,37 +118,39 @@ function zw_webapp_show_debug_message(WP_Post $post)
     }
 }
 
-function zw_webapp_get_daily_push_count()
-{
-    global $wpdb;
+function zw_webapp_get_daily_push_count() {
     $cache_key = 'zw_webapp_daily_push_count';
     $daily_push_count = wp_cache_get($cache_key);
 
     if (false === $daily_push_count) {
-        $six_days_ago = date('Y-m-d', strtotime('-6 days'));
-
-        $results = $wpdb->get_results($wpdb->prepare('
-            SELECT DATE(post_date) AS push_date, COUNT(*) AS count
-            FROM ' . $wpdb->posts . ' p
-            JOIN ' . $wpdb->postmeta . ' pm ON p.ID = pm.post_id
-            WHERE pm.meta_key = \'push_sent\' AND pm.meta_value = \'1\'
-            AND post_status = \'publish\' AND post_date >= %s
-            GROUP BY push_date
-            ORDER BY push_date DESC
-        ', $six_days_ago), OBJECT_K);
-
-        // Initialize daily push count array with the last 6 days (including today) set to 0
         $daily_push_count = array();
-        for ($i = 0; $i <= 6; $i++) {
-            $date = date('Y-m-d', strtotime('-' . $i . ' days'));
-            $daily_push_count[$date] = 0;
-        }
 
-        // Update counts for days with results
-        foreach ($results as $result) {
-            if (array_key_exists($result->push_date, $daily_push_count)) {
-                $daily_push_count[$result->push_date] = $result->count;
-            }
+        for ($i = 0; $i <= 6; $i++) {
+            $date_query = array(
+                array(
+                    'year'  => date('Y', strtotime("-$i days")),
+                    'month' => date('m', strtotime("-$i days")),
+                    'day'   => date('d', strtotime("-$i days")),
+                ),
+            );
+
+            $meta_query = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used in production with no issues
+                array(
+                    'key'     => 'push_sent',
+                    'value'   => '1',
+                    'compare' => '='
+                )
+            );
+
+            $args = array(
+                'date_query'     => $date_query,
+                'post_status'    => 'publish',
+                'meta_query'     => $meta_query,
+                'posts_per_page' => -1,
+            );
+
+            $query = new WP_Query($args);
+            $daily_push_count[date('Y-m-d', strtotime("-$i days"))] = $query->found_posts;
         }
 
         wp_cache_set($cache_key, $daily_push_count);
