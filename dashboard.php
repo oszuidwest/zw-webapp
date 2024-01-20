@@ -51,6 +51,11 @@ function zw_webapp_dashboard_widget_display()
         echo '<p>Er zijn recent geen artikelen gepusht.</p>';
     }
 
+	// Nitpicking
+    echo '<style>
+            #zw_webapp_dashboard_recent_pushes .inside { margin: 0; padding-bottom: 0; }
+          </style>';
+
     echo '</div>';
 
 	// Push Count
