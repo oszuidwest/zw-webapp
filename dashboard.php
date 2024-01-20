@@ -25,7 +25,7 @@ function zw_webapp_dashboard_widget_display()
 
     echo '<div id="published-posts" class="activity-block">';
 
-    echo '<h3>Recente gepushte artikelen</h3>';
+    echo '<h3>Recente gepusht</h3>';
 
     if ($recent_pushed_posts->have_posts()) {
         echo '<ul>';
