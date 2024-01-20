@@ -118,7 +118,8 @@ function zw_webapp_show_debug_message(WP_Post $post)
     }
 }
 
-function zw_webapp_get_daily_push_count() {
+function zw_webapp_get_daily_push_count() 
+{
     global $wpdb;
     $cache_key = 'zw_webapp_daily_push_count';
     $daily_push_count = wp_cache_get($cache_key);
@@ -139,7 +140,7 @@ function zw_webapp_get_daily_push_count() {
         // Initialize daily push count array with the last 6 days (including today) set to 0
         $daily_push_count = array();
         for ($i = 0; $i <= 6; $i++) {
-            $date = date('Y-m-d', strtotime("-$i days"));
+            $date = date('Y-m-d', strtotime('-' . $i . ' days'));
             $daily_push_count[$date] = 0;
         }
 
