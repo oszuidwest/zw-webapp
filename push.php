@@ -160,7 +160,6 @@ function zw_webapp_get_daily_push_count()
     return $daily_push_count;
 }
 
-
 function zw_webapp_invalidate_push_count_cache()
 {
     $cache_key = 'zw_webapp_daily_push_count';
