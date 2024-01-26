@@ -25,4 +25,4 @@ This plugin offers two filters: `zw_webapp_send_notification` determines whether
 
 1. **Setting Up the Manifest**: Go to the 'ZuidWest Webapp' options page in the WordPress admin dashboard to configure the necessary settings.
 2. **Push Notifications**: Enable debugging and confirm that your posts are set to trigger push notifications upon publishing or updating. Debug messages related to push notifications are accessible in the admin dashboard.
-3. **Disable debugging**: Once everthing is set, disable debugging.
+3. **Disable debugging**: Once everything is set, disable debugging.
