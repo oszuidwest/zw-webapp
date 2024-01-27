@@ -17,13 +17,13 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update)
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Filter zw_webapp_send_notification returned false, or was not hooked');
     }
 
-    if ('post' !== $post->post_type) {
+    if ($post->post_type !== 'post') {
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Not a post');
     }
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Doing autosave');
     }
-    if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) {
+    if (get_post_status($post_id) !== 'publish' || $post->post_status === 'trash') {
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Post not published or is in trash');
     }
     if (get_post_meta($post_id, 'push_sent', true)) {
