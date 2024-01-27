@@ -127,11 +127,14 @@ function zw_webapp_get_daily_push_count()
         $daily_push_count = array();
 
         for ($i = 0; $i <= 6; $i++) {
+            // Calculate a weeks worth of dates (last 6 days including today)
+            $date = date('Y-m-d', strtotime('-' . $i . ' days'));
+            
             $date_query = array(
                 array(
-                    'year'  => date('Y', strtotime('-' . $i . ' days')),
-                    'month' => date('m', strtotime('-' . $i . ' days')),
-                    'day'   => date('d', strtotime('-' . $i . ' days')),
+                    'year'  => date('Y', strtotime($date)),
+                    'month' => date('m', strtotime($date)),
+                    'day'   => date('d', strtotime($date)),
                 ),
             );
 
@@ -151,7 +154,7 @@ function zw_webapp_get_daily_push_count()
             );
 
             $query = new WP_Query($args);
-            $daily_push_count[date('Y-m-d', strtotime('-' . $i . ' days'))] = $query->found_posts;
+            $daily_push_count[$date] = $query->found_posts;
         }
 
         wp_cache_set($cache_key, $daily_push_count);
