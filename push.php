@@ -129,7 +129,7 @@ function zw_webapp_get_daily_push_count()
         for ($i = 0; $i <= 6; $i++) {
             // Calculate a weeks worth of dates (last 6 days including today)
             $date = date('Y-m-d', strtotime('-' . $i . ' days'));
-            
+
             $date_query = array(
                 array(
                     'year'  => date('Y', strtotime($date)),
