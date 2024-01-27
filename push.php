@@ -90,7 +90,7 @@ function zw_webapp_call_api($post_id)
     $response_code = wp_remote_retrieve_response_code($response);
     $response_body = wp_remote_retrieve_body($response);
 
-    if (200 !== $response_code) {
+    if ($response_code !== 200) {
         return zw_webapp_set_debug_message($post_id, 'Error sending push: ' . $response_code . ' - ' . $response_body);
     }
 
@@ -123,7 +123,7 @@ function zw_webapp_get_daily_push_count()
     $cache_key = 'zw_webapp_daily_push_count';
     $daily_push_count = wp_cache_get($cache_key);
 
-    if (false === $daily_push_count) {
+    if ($daily_push_count === false) {
         $daily_push_count = array();
 
         for ($i = 0; $i <= 6; $i++) {
