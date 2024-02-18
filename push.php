@@ -17,13 +17,13 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update)
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Filter zw_webapp_send_notification returned false, or was not hooked');
     }
 
-    if ('post' !== $post->post_type) {
+    if ($post->post_type !== 'post') {
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Not a post');
     }
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Doing autosave');
     }
-    if ('publish' !== get_post_status($post_id) || 'trash' === $post->post_status) {
+    if (get_post_status($post_id) !== 'publish' || $post->post_status === 'trash') {
         return zw_webapp_set_debug_message($post_id, 'Not pushed - Post not published or is in trash');
     }
     if (get_post_meta($post_id, 'push_sent', true)) {
@@ -90,11 +90,12 @@ function zw_webapp_call_api($post_id)
     $response_code = wp_remote_retrieve_response_code($response);
     $response_body = wp_remote_retrieve_body($response);
 
-    if (200 !== $response_code) {
+    if ($response_code !== 200) {
         return zw_webapp_set_debug_message($post_id, 'Error sending push: ' . $response_code . ' - ' . $response_body);
     }
 
     update_post_meta($post_id, 'push_sent', true);
+    zw_webapp_invalidate_push_count_cache();
     zw_webapp_set_debug_message($post_id, 'Push sent successfully');
 }
 
@@ -115,4 +116,55 @@ function zw_webapp_show_debug_message(WP_Post $post)
         echo '<div class="notice notice-info"><p>' . implode('<br />', $messages) . '</p></div>';
         delete_post_meta($post->ID, 'zw_webapp_debug_msg');
     }
+}
+
+function zw_webapp_get_daily_push_count()
+{
+    $cache_key = 'zw_webapp_daily_push_count';
+    $daily_push_count = wp_cache_get($cache_key);
+
+    if ($daily_push_count === false) {
+        $daily_push_count = array();
+
+        for ($i = 0; $i <= 6; $i++) {
+            // Calculate a weeks worth of dates (last 6 days including today)
+            $date = date('Y-m-d', strtotime('-' . $i . ' days'));
+
+            $date_query = array(
+                array(
+                    'year'  => date('Y', strtotime($date)),
+                    'month' => date('m', strtotime($date)),
+                    'day'   => date('d', strtotime($date)),
+                ),
+            );
+
+            $meta_query = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used in production with no issues
+                array(
+                    'key'     => 'push_sent',
+                    'value'   => '1',
+                    'compare' => '='
+                )
+            );
+
+            $args = array(
+                'date_query'     => $date_query,
+                'post_status'    => 'publish',
+                'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used in production with no issues
+                'posts_per_page' => -1,
+            );
+
+            $query = new WP_Query($args);
+            $daily_push_count[$date] = $query->found_posts;
+        }
+
+        wp_cache_set($cache_key, $daily_push_count);
+    }
+
+    return $daily_push_count;
+}
+
+function zw_webapp_invalidate_push_count_cache()
+{
+    $cache_key = 'zw_webapp_daily_push_count';
+    wp_cache_delete($cache_key);
 }
