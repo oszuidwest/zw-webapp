@@ -65,7 +65,7 @@ function zw_webapp_call_api($post_id)
     $utm_url = add_query_arg('utm_source', 'push', $base_url);
 
     $body_content = [
-        'recipients' => new stdClass(),
+        'recipients' => (object) ['users' => 'all'],
         'url' => $utm_url,
         'title' => $title,
         'body' => get_post($post_id)->post_title,
