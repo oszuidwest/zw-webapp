@@ -68,7 +68,7 @@ function zw_webapp_call_api($post_id)
         'recipients' => ['users' => 'all'],
         'url' => $utm_url,
         'title' => $title,
-        'body' => get_post($post_id)->post_title,
+        'body' => html_entity_decode(get_post($post_id)->post_title),
     ];
 
     if ($image_url) {
