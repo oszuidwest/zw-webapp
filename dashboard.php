@@ -16,6 +16,8 @@ function zw_webapp_dashboard_widget_display()
     $args = array(
         'post_type' => 'post',
         'posts_per_page' => 5,
+        'no_found_rows' => true,
+        'update_post_term_cache' => false,
         'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used in production with no issues
             array(
                 'key' => 'push_sent',

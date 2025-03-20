@@ -113,51 +113,76 @@ function zw_webapp_show_debug_message(WP_Post $post)
 {
     $messages = get_post_meta($post->ID, 'zw_webapp_debug_msg');
     if ($messages) {
-        echo '<div class="notice notice-info"><p>' . implode('<br />', $messages) . '</p></div>';
+        ?>
+        <div class="notice notice-info">
+            <p>
+            <?php
+            foreach ($messages as $index => $message) {
+                if ($index > 0) {
+                    echo '<br />';
+                }
+                echo esc_html($message);
+            }
+            ?>
+            </p>
+        </div>
+        <?php
         delete_post_meta($post->ID, 'zw_webapp_debug_msg');
     }
 }
 
 function zw_webapp_get_daily_push_count()
 {
+    global $wpdb;
     $cache_key = 'zw_webapp_daily_push_count';
     $daily_push_count = wp_cache_get($cache_key);
 
     if ($daily_push_count === false) {
+        // Use a single direct SQL query instead of 7 separate WP_Query calls
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                'SELECT 
+                    DATE(p.post_date) as push_date, 
+                    COUNT(*) as count 
+                FROM 
+                    ' . $wpdb->posts . ' p
+                    JOIN ' . $wpdb->postmeta . ' pm ON p.ID = pm.post_id 
+                WHERE 
+                    pm.meta_key = %s 
+                    AND pm.meta_value = %s 
+                    AND p.post_type = %s 
+                    AND p.post_status = %s 
+                    AND p.post_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) 
+                GROUP BY 
+                    DATE(p.post_date) 
+                ORDER BY 
+                    push_date DESC',
+                'push_sent',
+                '1',
+                'post',
+                'publish'
+            )
+        );
+
+        // Initialize counts for all 7 days (today + 6 previous days)
         $daily_push_count = array();
-
         for ($i = 0; $i <= 6; $i++) {
-            // Calculate a weeks worth of dates (last 6 days including today)
             $date = date('Y-m-d', strtotime('-' . $i . ' days'));
-
-            $date_query = array(
-                array(
-                    'year'  => date('Y', strtotime($date)),
-                    'month' => date('m', strtotime($date)),
-                    'day'   => date('d', strtotime($date)),
-                ),
-            );
-
-            $meta_query = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used in production with no issues
-                array(
-                    'key'     => 'push_sent',
-                    'value'   => '1',
-                    'compare' => '='
-                )
-            );
-
-            $args = array(
-                'date_query'     => $date_query,
-                'post_status'    => 'publish',
-                'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used in production with no issues
-                'posts_per_page' => -1,
-            );
-
-            $query = new WP_Query($args);
-            $daily_push_count[$date] = $query->found_posts;
+            $daily_push_count[$date] = 0;
         }
 
-        wp_cache_set($cache_key, $daily_push_count);
+        // Fill in actual counts from query results
+        if ($results) {
+            foreach ($results as $row) {
+                $daily_push_count[$row->push_date] = (int) $row->count;
+            }
+        }
+
+        // Sort by date (newest first)
+        krsort($daily_push_count);
+
+        // Cache for one hour
+        wp_cache_set($cache_key, $daily_push_count, '', HOUR_IN_SECONDS);
     }
 
     return $daily_push_count;

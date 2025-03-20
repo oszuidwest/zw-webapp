@@ -29,7 +29,6 @@ function zw_webapp_head_tags()
 
     // Check for required settings
     if (!empty($webapp_settings['theme_color'])) {
-        $theme_color = esc_attr($webapp_settings['theme_color']);
-        echo '<meta name="theme-color" content="' . $theme_color . '"/>' . "\n";
+        echo '<meta name="theme-color" content="' . esc_attr($webapp_settings['theme_color']) . '"/>' . "\n";
     }
 }

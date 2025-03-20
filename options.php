@@ -24,17 +24,17 @@ function zw_webapp_settings_init()
 
     add_settings_section(
         'zw_webapp_pluginPage_section',
-        __('ZuidWest Webapp Settings', 'wordpress'),
+        __('ZuidWest Webapp Settings', 'zw-webapp'),
         'zw_webapp_settings_section_callback',
         'pluginPage'
     );
 
     // Fields for the settings
     $fields = [
-        ['theme_color', __('Theme Color', 'wordpress')],
-        ['progressier_id', __('Progressier ID', 'wordpress')],
-        ['auth_token', __('Authorization Token', 'wordpress')],
-        ['show_push_debug', __('Enable push debug', 'wordpress')]
+        ['theme_color', __('Theme Color', 'zw-webapp')],
+        ['progressier_id', __('Progressier ID', 'zw-webapp')],
+        ['auth_token', __('Authorization Token', 'zw-webapp')],
+        ['show_push_debug', __('Enable push debug', 'zw-webapp')]
     ];
 
     foreach ($fields as $field) {
@@ -62,16 +62,16 @@ function zw_webapp_settings_field_callback($args)
     switch ($args['id']) {
         case 'theme_color':
         case 'progressier_id':
-            echo sprintf('<input type="text" name="zw_webapp_settings[%s]" value="%s" autocomplete="off">', esc_attr($args['id']), $field_value);
+            echo sprintf('<input type="text" name="zw_webapp_settings[%s]" value="%s" autocomplete="off">', esc_attr($args['id']), esc_attr($field_value));
             break;
 
         case 'auth_token':
-            echo sprintf('<input type="password" name="zw_webapp_settings[%s]" value="%s" autocomplete="off">', esc_attr($args['id']), $field_value);
+            echo sprintf('<input type="password" name="zw_webapp_settings[%s]" value="%s" autocomplete="off">', esc_attr($args['id']), esc_attr($field_value));
             break;
 
         case 'show_push_debug':
             $checked = $field_value ? 'checked' : '';
-            echo '<input type="checkbox" name="zw_webapp_settings[show_push_debug]" value="1" ' . $checked . ' autocomplete="off">';
+            echo '<input type="checkbox" name="zw_webapp_settings[show_push_debug]" value="1" ' . esc_attr($checked) . ' autocomplete="off">';
             break;
 
         default:
