@@ -1,5 +1,6 @@
 parameters:
-  level: 5
+  level: 6
+  phpVersion: 80300
   paths:
     - frontend.php
     - options.php

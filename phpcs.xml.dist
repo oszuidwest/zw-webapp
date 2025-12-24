@@ -23,6 +23,11 @@
         <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
     </rule>
     <rule ref="PHPCompatibilityWP"/>
+
+    <!-- PHP and WordPress version requirements -->
+    <config name="testVersion" value="8.3-"/>
+    <config name="minimum_wp_version" value="6.4"/>
+
     <rule ref="Squiz.Strings.DoubleQuoteUsage">
 
     </rule>
