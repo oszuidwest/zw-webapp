@@ -5,7 +5,7 @@
 add_action('wp_enqueue_scripts', 'zw_webapp_enqueue_scripts');
 add_action('wp_head', 'zw_webapp_head_tags');
 
-function zw_webapp_enqueue_scripts()
+function zw_webapp_enqueue_scripts(): void
 {
     $webapp_settings = get_option('zw_webapp_settings');
 
@@ -18,7 +18,7 @@ function zw_webapp_enqueue_scripts()
     }
 }
 
-function zw_webapp_head_tags()
+function zw_webapp_head_tags(): void
 {
     $webapp_settings = get_option('zw_webapp_settings');
 
