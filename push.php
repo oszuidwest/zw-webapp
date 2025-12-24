@@ -4,7 +4,7 @@ add_action('save_post', 'zw_webapp_schedule_push_notification', 20, 3);
 add_action('send_push_notification', 'zw_webapp_call_api');
 add_action('edit_form_top', 'zw_webapp_show_debug_message', 10, 1);
 
-function zw_webapp_schedule_push_notification($post_id, $post, $update)
+function zw_webapp_schedule_push_notification(int $post_id, WP_Post $post, bool $update): void
 {
     if (defined('WP_CLI') && WP_CLI) {
         zw_webapp_set_debug_message($post_id, 'Not pushed - Refusing to push on cli-triggered actions');
@@ -14,32 +14,38 @@ function zw_webapp_schedule_push_notification($post_id, $post, $update)
     $send_push = false;
     $send_push = apply_filters('zw_webapp_send_notification', $send_push, $post_id);
     if (!$send_push) {
-        return zw_webapp_set_debug_message($post_id, 'Not pushed - Filter zw_webapp_send_notification returned false, or was not hooked');
+        zw_webapp_set_debug_message($post_id, 'Not pushed - Filter zw_webapp_send_notification returned false, or was not hooked');
+        return;
     }
 
     if ($post->post_type !== 'post') {
-        return zw_webapp_set_debug_message($post_id, 'Not pushed - Not a post');
+        zw_webapp_set_debug_message($post_id, 'Not pushed - Not a post');
+        return;
     }
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return zw_webapp_set_debug_message($post_id, 'Not pushed - Doing autosave');
+        zw_webapp_set_debug_message($post_id, 'Not pushed - Doing autosave');
+        return;
     }
     if (get_post_status($post_id) !== 'publish' || $post->post_status === 'trash') {
-        return zw_webapp_set_debug_message($post_id, 'Not pushed - Post not published or is in trash');
+        zw_webapp_set_debug_message($post_id, 'Not pushed - Post not published or is in trash');
+        return;
     }
     if (get_post_meta($post_id, 'push_sent', true)) {
-        return zw_webapp_set_debug_message($post_id, 'Not pushed - Push already sent');
+        zw_webapp_set_debug_message($post_id, 'Not pushed - Push already sent');
+        return;
     }
 
     // Check if a push notification is already scheduled for this post
     if (wp_next_scheduled('send_push_notification', [$post_id])) {
-        return zw_webapp_set_debug_message($post_id, 'Not pushed - Push notification already scheduled for this post');
+        zw_webapp_set_debug_message($post_id, 'Not pushed - Push notification already scheduled for this post');
+        return;
     }
 
     wp_schedule_single_event(time(), 'send_push_notification', [$post_id]);
     zw_webapp_set_debug_message($post_id, 'Push notification scheduled');
 }
 
-function zw_webapp_get_featured_image_url($post_id)
+function zw_webapp_get_featured_image_url(int $post_id): ?string
 {
     $thumbnail_id = get_post_thumbnail_id($post_id);
     if (!$thumbnail_id) {
@@ -54,7 +60,7 @@ function zw_webapp_get_featured_image_url($post_id)
     return $image_url;
 }
 
-function zw_webapp_call_api($post_id)
+function zw_webapp_call_api(int $post_id): void
 {
     $title = apply_filters('zw_webapp_title', 'Nieuws', $post_id);
 
@@ -84,14 +90,16 @@ function zw_webapp_call_api($post_id)
     ]);
 
     if (is_wp_error($response)) {
-        return zw_webapp_set_debug_message($post_id, 'Error sending push: ' . $response->get_error_message());
+        zw_webapp_set_debug_message($post_id, 'Error sending push: ' . $response->get_error_message());
+        return;
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
     $response_body = wp_remote_retrieve_body($response);
 
     if ($response_code !== 200) {
-        return zw_webapp_set_debug_message($post_id, 'Error sending push: ' . $response_code . ' - ' . $response_body);
+        zw_webapp_set_debug_message($post_id, 'Error sending push: ' . $response_code . ' - ' . $response_body);
+        return;
     }
 
     update_post_meta($post_id, 'push_sent', true);
@@ -99,7 +107,7 @@ function zw_webapp_call_api($post_id)
     zw_webapp_set_debug_message($post_id, 'Push sent successfully');
 }
 
-function zw_webapp_set_debug_message($post_id, $message)
+function zw_webapp_set_debug_message(int $post_id, string $message): void
 {
     $options = get_option('zw_webapp_settings');
     if (!isset($options['show_push_debug']) || !$options['show_push_debug']) {
@@ -109,7 +117,7 @@ function zw_webapp_set_debug_message($post_id, $message)
     add_post_meta($post_id, 'zw_webapp_debug_msg', $message);
 }
 
-function zw_webapp_show_debug_message(WP_Post $post)
+function zw_webapp_show_debug_message(WP_Post $post): void
 {
     $messages = get_post_meta($post->ID, 'zw_webapp_debug_msg');
     if ($messages) {
@@ -131,7 +139,10 @@ function zw_webapp_show_debug_message(WP_Post $post)
     }
 }
 
-function zw_webapp_get_daily_push_count()
+/**
+ * @return array<string, int>
+ */
+function zw_webapp_get_daily_push_count(): array
 {
     global $wpdb;
     $cache_key = 'zw_webapp_daily_push_count';
@@ -141,21 +152,21 @@ function zw_webapp_get_daily_push_count()
         // Use a single direct SQL query instead of 7 separate WP_Query calls
         $results = $wpdb->get_results(
             $wpdb->prepare(
-                'SELECT 
-                    DATE(p.post_date) as push_date, 
-                    COUNT(*) as count 
-                FROM 
+                'SELECT
+                    DATE(p.post_date) as push_date,
+                    COUNT(*) as count
+                FROM
                     ' . $wpdb->posts . ' p
-                    JOIN ' . $wpdb->postmeta . ' pm ON p.ID = pm.post_id 
-                WHERE 
-                    pm.meta_key = %s 
-                    AND pm.meta_value = %s 
-                    AND p.post_type = %s 
-                    AND p.post_status = %s 
-                    AND p.post_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) 
-                GROUP BY 
-                    DATE(p.post_date) 
-                ORDER BY 
+                    JOIN ' . $wpdb->postmeta . ' pm ON p.ID = pm.post_id
+                WHERE
+                    pm.meta_key = %s
+                    AND pm.meta_value = %s
+                    AND p.post_type = %s
+                    AND p.post_status = %s
+                    AND p.post_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+                GROUP BY
+                    DATE(p.post_date)
+                ORDER BY
                     push_date DESC',
                 'push_sent',
                 '1',
@@ -188,7 +199,7 @@ function zw_webapp_get_daily_push_count()
     return $daily_push_count;
 }
 
-function zw_webapp_invalidate_push_count_cache()
+function zw_webapp_invalidate_push_count_cache(): void
 {
     $cache_key = 'zw_webapp_daily_push_count';
     wp_cache_delete($cache_key);

@@ -1,6 +1,6 @@
 <?php
 
-function zw_webapp_add_dashboard_widgets()
+function zw_webapp_add_dashboard_widgets(): void
 {
     wp_add_dashboard_widget(
         'zw_webapp_dashboard_recent_pushes',
@@ -10,7 +10,7 @@ function zw_webapp_add_dashboard_widgets()
 }
 add_action('wp_dashboard_setup', 'zw_webapp_add_dashboard_widgets');
 
-function zw_webapp_dashboard_widget_display()
+function zw_webapp_dashboard_widget_display(): void
 {
     // Recent Pushed Articles
     $args = array(
