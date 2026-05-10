@@ -1,7 +1,11 @@
 <?php
+
 /**
  * Add link to the Manifest in the theme.
  */
+
+defined('ABSPATH') || exit;
+
 add_action('wp_enqueue_scripts', 'zw_webapp_enqueue_scripts');
 add_action('wp_head', 'zw_webapp_head_tags');
 

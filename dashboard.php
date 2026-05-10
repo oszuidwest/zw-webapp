@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 function zw_webapp_add_dashboard_widgets(): void
 {
     wp_add_dashboard_widget(

@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 add_action('save_post', 'zw_webapp_schedule_push_notification', 20, 3);
 add_action('send_push_notification', 'zw_webapp_call_api');
 add_action('edit_form_top', 'zw_webapp_show_debug_message', 10, 1);
