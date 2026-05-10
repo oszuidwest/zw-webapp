@@ -3,6 +3,9 @@
 /**
  * Add the options page to the WordPress menu.
  */
+
+defined('ABSPATH') || exit;
+
 function zw_webapp_add_admin_menu(): void
 {
     add_options_page(
@@ -18,6 +21,9 @@ add_action('admin_menu', 'zw_webapp_add_admin_menu');
 /**
  * Register settings for the webapp.
  */
+
+defined('ABSPATH') || exit;
+
 function zw_webapp_settings_init(): void
 {
     register_setting('pluginPage', 'zw_webapp_settings', ['sanitize_callback' => 'zw_webapp_validate_settings']);
