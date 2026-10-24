@@ -7,7 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-add_action( 'save_post', 'zw_webapp_schedule_push_notification', 20, 3 );
+// Runs after the post, its terms and its meta are stored, also for REST (block editor) saves.
+add_action( 'wp_after_insert_post', 'zw_webapp_schedule_push_notification', 10, 3 );
 add_action( 'send_push_notification', 'zw_webapp_call_api' );
 add_action( 'edit_form_top', 'zw_webapp_show_debug_message', 10, 1 );
 
@@ -50,8 +51,8 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 		return;
 	}
 
-	// Check if a push notification is already scheduled for this post.
-	if ( wp_next_scheduled( 'send_push_notification', array( $post_id ) ) ) {
+	// Stored on the post, so a later save still sees it while cron is sending the push.
+	if ( ! add_post_meta( $post_id, '_zw_webapp_push_queued', time(), true ) ) {
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - Push notification already scheduled for this post' );
 		return;
 	}
@@ -118,6 +119,7 @@ function zw_webapp_call_api( int $post_id ): void {
 	);
 
 	if ( is_wp_error( $response ) ) {
+		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
 		zw_webapp_set_debug_message( $post_id, 'Error sending push: ' . $response->get_error_message() );
 		return;
 	}
@@ -126,6 +128,7 @@ function zw_webapp_call_api( int $post_id ): void {
 	$response_body = wp_remote_retrieve_body( $response );
 
 	if ( 200 !== $response_code ) {
+		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
 		zw_webapp_set_debug_message( $post_id, 'Error sending push: ' . $response_code . ' - ' . $response_body );
 		return;
 	}
