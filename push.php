@@ -57,7 +57,9 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 		return;
 	}
 
-	if ( ! wp_schedule_single_event( time(), 'send_push_notification', array( $post_id ) ) ) {
+	// Scheduling also returns false when the same event is already scheduled; keep the marker then.
+	if ( ! wp_schedule_single_event( time(), 'send_push_notification', array( $post_id ) )
+		&& ! wp_next_scheduled( 'send_push_notification', array( $post_id ) ) ) {
 		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - Scheduling the push failed' );
 		return;
