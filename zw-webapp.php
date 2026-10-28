@@ -4,7 +4,7 @@
  * Description: Integrates Progressier PWA.
  * Version:     2.1.3
  * Requires at least: 7.0
- * Requires PHP: 8.3
+ * Requires PHP: 8.4
  * Author:      Streekomroep ZuidWest
  * Author URI:  https://www.zuidwesttv.nl
  * License:     GPL-2.0-or-later
