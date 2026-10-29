@@ -7,7 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-add_action( 'save_post', 'zw_webapp_schedule_push_notification', 20, 3 );
+// Runs after the post, its terms and its meta are stored, also for REST (block editor) saves.
+add_action( 'wp_after_insert_post', 'zw_webapp_schedule_push_notification', 10, 3 );
 add_action( 'send_push_notification', 'zw_webapp_call_api' );
 add_action( 'edit_form_top', 'zw_webapp_show_debug_message', 10, 1 );
 
@@ -50,13 +51,26 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 		return;
 	}
 
-	// Check if a push notification is already scheduled for this post.
-	if ( wp_next_scheduled( 'send_push_notification', array( $post_id ) ) ) {
-		zw_webapp_set_debug_message( $post_id, 'Not pushed - Push notification already scheduled for this post' );
+	// Stored on the post, so a later save still sees it while cron is sending the push.
+	if ( ! add_post_meta( $post_id, '_zw_webapp_push_queued', time(), true ) ) {
+		// Ten minutes after it was queued or started sending, the push is assumed lost and a save queues it again.
+		// Passing the value we read makes the takeover fail if cron or another save changed it since.
+		$queued_at = get_post_meta( $post_id, '_zw_webapp_push_queued', true );
+		if ( ! $queued_at || time() - (int) $queued_at < 10 * MINUTE_IN_SECONDS
+			|| ! update_post_meta( $post_id, '_zw_webapp_push_queued', time(), $queued_at ) ) {
+			zw_webapp_set_debug_message( $post_id, 'Not pushed - Push notification already scheduled for this post' );
+			return;
+		}
+	}
+
+	// Scheduling also returns false when the same event is already scheduled; keep the marker then.
+	if ( ! wp_schedule_single_event( time(), 'send_push_notification', array( $post_id ) )
+		&& ! wp_next_scheduled( 'send_push_notification', array( $post_id ) ) ) {
+		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
+		zw_webapp_set_debug_message( $post_id, 'Not pushed - Scheduling the push failed' );
 		return;
 	}
 
-	wp_schedule_single_event( time(), 'send_push_notification', array( $post_id ) );
 	zw_webapp_set_debug_message( $post_id, 'Push notification scheduled' );
 }
 
@@ -87,6 +101,14 @@ function zw_webapp_get_featured_image_url( int $post_id ): ?string {
  * @return void
  */
 function zw_webapp_call_api( int $post_id ): void {
+	// A second event for this post (queued while the first was sending) stops here once the first has sent.
+	if ( get_post_meta( $post_id, 'push_sent', true ) ) {
+		return;
+	}
+
+	// Restarts the marker's ten minutes, so a save during this send doesn't queue it again.
+	update_post_meta( $post_id, '_zw_webapp_push_queued', time() );
+
 	$title = apply_filters( 'zw_webapp_title', 'Nieuws', $post_id );
 
 	$image_url = zw_webapp_get_featured_image_url( $post_id );
@@ -118,6 +140,7 @@ function zw_webapp_call_api( int $post_id ): void {
 	);
 
 	if ( is_wp_error( $response ) ) {
+		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
 		zw_webapp_set_debug_message( $post_id, 'Error sending push: ' . $response->get_error_message() );
 		return;
 	}
@@ -126,6 +149,7 @@ function zw_webapp_call_api( int $post_id ): void {
 	$response_body = wp_remote_retrieve_body( $response );
 
 	if ( 200 !== $response_code ) {
+		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
 		zw_webapp_set_debug_message( $post_id, 'Error sending push: ' . $response_code . ' - ' . $response_body );
 		return;
 	}
