@@ -53,8 +53,14 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 
 	// Stored on the post, so a later save still sees it while cron is sending the push.
 	if ( ! add_post_meta( $post_id, '_zw_webapp_push_queued', time(), true ) ) {
-		zw_webapp_set_debug_message( $post_id, 'Not pushed - Push notification already scheduled for this post' );
-		return;
+		// Ten minutes after it was queued or started sending, the push is assumed lost and a save queues it again.
+		// Passing the value we read makes the takeover fail if cron or another save changed it since.
+		$queued_at = get_post_meta( $post_id, '_zw_webapp_push_queued', true );
+		if ( ! $queued_at || time() - (int) $queued_at < 10 * MINUTE_IN_SECONDS
+			|| ! update_post_meta( $post_id, '_zw_webapp_push_queued', time(), $queued_at ) ) {
+			zw_webapp_set_debug_message( $post_id, 'Not pushed - Push notification already scheduled for this post' );
+			return;
+		}
 	}
 
 	// Scheduling also returns false when the same event is already scheduled; keep the marker then.
@@ -95,6 +101,14 @@ function zw_webapp_get_featured_image_url( int $post_id ): ?string {
  * @return void
  */
 function zw_webapp_call_api( int $post_id ): void {
+	// A second event for this post (queued while the first was sending) stops here once the first has sent.
+	if ( get_post_meta( $post_id, 'push_sent', true ) ) {
+		return;
+	}
+
+	// Restarts the marker's ten minutes, so a save during this send doesn't queue it again.
+	update_post_meta( $post_id, '_zw_webapp_push_queued', time() );
+
 	$title = apply_filters( 'zw_webapp_title', 'Nieuws', $post_id );
 
 	$image_url = zw_webapp_get_featured_image_url( $post_id );
