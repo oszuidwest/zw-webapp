@@ -101,6 +101,14 @@ function zw_webapp_get_featured_image_url( int $post_id ): ?string {
  * @return void
  */
 function zw_webapp_call_api( int $post_id ): void {
+	// The post can be unpublished or deleted between scheduling and sending.
+	$post = get_post( $post_id );
+	if ( ! $post || 'publish' !== $post->post_status ) {
+		// Lets a later publish queue the push again.
+		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
+		return;
+	}
+
 	// A second event for this post (queued while the first was sending) stops here once the first has sent.
 	if ( get_post_meta( $post_id, 'push_sent', true ) ) {
 		return;
@@ -121,7 +129,7 @@ function zw_webapp_call_api( int $post_id ): void {
 		'recipients' => array( 'users' => 'all' ),
 		'url'        => $utm_url,
 		'title'      => $title,
-		'body'       => html_entity_decode( get_post( $post_id )->post_title ),
+		'body'       => html_entity_decode( $post->post_title ),
 	);
 
 	if ( $image_url ) {
