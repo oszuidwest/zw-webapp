@@ -30,6 +30,7 @@ function zw_webapp_dashboard_widget_display(): void {
 	// Recent Pushed Articles.
 	$args                = array(
 		'post_type'              => 'post',
+		'post_status'            => 'publish',
 		'posts_per_page'         => 5,
 		'no_found_rows'          => true,
 		'update_post_term_cache' => false,
