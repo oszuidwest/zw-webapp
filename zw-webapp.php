@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ZuidWest Webapp
  * Description: Integrates Progressier PWA.
- * Version:     2.1.3
+ * Version:     2.2.0
  * Requires at least: 7.0
  * Requires PHP: 8.4
  * Author:      Streekomroep ZuidWest
