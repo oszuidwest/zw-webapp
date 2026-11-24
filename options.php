@@ -141,10 +141,10 @@ function zw_webapp_options_page(): void {
 /**
  * Validates the submitted settings; required fields fall back to the previous value.
  *
- * @param array<string, mixed> $value Submitted settings.
+ * @param mixed $value Submitted settings; not an array when the request leaves them out or sends one text value.
  * @return array<string, mixed> Sanitised settings.
  */
-function zw_webapp_validate_settings( array $value ): array {
+function zw_webapp_validate_settings( mixed $value ): array {
 	$old_value = get_option( 'zw_webapp_settings' );
 
 	// List of fields that should not be empty.
