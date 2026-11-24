@@ -62,8 +62,9 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 		}
 	}
 
+	// Held back for a minute, so the push can still be switched off or the post unpublished.
 	// Scheduling also returns false when the same event is already scheduled; keep the marker then.
-	if ( ! wp_schedule_single_event( time(), 'send_push_notification', array( $post_id ) )
+	if ( ! wp_schedule_single_event( time() + MINUTE_IN_SECONDS, 'send_push_notification', array( $post_id ) )
 		&& ! wp_next_scheduled( 'send_push_notification', array( $post_id ) ) ) {
 		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - Scheduling the push failed' );
