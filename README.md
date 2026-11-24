@@ -6,7 +6,7 @@ The ZuidWest Webapp plugin seamlessly integrates the [Progressier PWA](https://p
 
 - **Manifest Integration**: Incorporates a link to the manifest within the theme, configurable via user-defined settings.
 - **Options Page**: Provides a dedicated page in the WordPress admin dashboard for managing the plugin's settings.
-- **Push Notifications**: Enables sending of push notifications whenever a post is published or updated.
+- **Push Notifications**: Enables sending of push notifications whenever a post is published or updated. A push is due about a minute after it is queued and is sent by the first cron run after that, if the post is still published and the notification filter still allows it.
 - **Push Analytics**: Includes a dashboard widget that displays articles that have been pushed and the amount of push notifications sent in the last 7 days.
 
 ## Installation
@@ -19,7 +19,7 @@ The ZuidWest Webapp plugin seamlessly integrates the [Progressier PWA](https://p
 
 ## Integrating in Your Theme
 
-This plugin offers two filters: `zw_webapp_send_notification` determines whether a push notification is sent, defaulting to false. This means that **by default, push notifications are not triggered**. You can attach custom logic, a metabox, or an ACF field to control this behavior. The `zw_webapp_title` filter allows customization of the notification title, which defaults to 'Nieuws'. This filter can be overridden to display, for instance, your site's name or the post's category. Our integration details are available in [this commit](https://github.com/oszuidwest/streekomroep-wp/commit/2f47ef4d259b3826b7643653cb47a567833cd73a).
+This plugin offers two filters: `zw_webapp_send_notification` determines whether a push notification is sent, defaulting to false. This means that **by default, push notifications are not triggered**. You can attach custom logic, a metabox, or an ACF field to control this behavior. The filter runs on post saves and is checked again when a queued push is processed, including in cron. Use stored data such as post meta rather than relying on the current request or user. If the filter is not loaded in cron, the push is withheld. The `zw_webapp_title` filter allows customization of the notification title, which defaults to 'Nieuws'. This filter can be overridden to display, for instance, your site's name or the post's category. Our integration details are available in [this commit](https://github.com/oszuidwest/streekomroep-wp/commit/2f47ef4d259b3826b7643653cb47a567833cd73a).
 
 ## Usage
 

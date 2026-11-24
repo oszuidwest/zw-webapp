@@ -62,8 +62,9 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 		}
 	}
 
+	// Held back for a minute, so the push can still be switched off or the post unpublished.
 	// Scheduling also returns false when the same event is already scheduled; keep the marker then.
-	if ( ! wp_schedule_single_event( time(), 'send_push_notification', array( $post_id ) )
+	if ( ! wp_schedule_single_event( time() + MINUTE_IN_SECONDS, 'send_push_notification', array( $post_id ) )
 		&& ! wp_next_scheduled( 'send_push_notification', array( $post_id ) ) ) {
 		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - Scheduling the push failed' );
@@ -100,17 +101,22 @@ function zw_webapp_get_featured_image_url( int $post_id ): ?string {
  * @return void
  */
 function zw_webapp_call_api( int $post_id ): void {
+	// An earlier event in this cron run may have cached the post and its meta, so read both fresh.
+	wp_cache_delete( $post_id, 'posts' );
+	wp_cache_delete( $post_id, 'post_meta' );
+
 	// A second event for this post (queued while the first was sending) stops here once the first has sent.
 	if ( get_post_meta( $post_id, 'push_sent', true ) ) {
 		return;
 	}
 
-	// The post can be unpublished or deleted after scheduling. Read it fresh: an earlier event in this cron run may have it cached.
-	wp_cache_delete( $post_id, 'posts' );
-	if ( 'publish' !== get_post_status( $post_id ) ) {
-		// Lets a later publish queue the push again.
+	// The post can be unpublished or deleted after scheduling, or its push switched off.
+	$published = 'publish' === get_post_status( $post_id );
+	if ( ! $published || ! apply_filters( 'zw_webapp_send_notification', false, $post_id ) ) {
+		// Lets a later save queue the push again.
 		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
-		zw_webapp_set_debug_message( $post_id, 'Not pushed - Post no longer published' );
+		$reason = $published ? 'Filter zw_webapp_send_notification returned false when sending' : 'Post no longer published';
+		zw_webapp_set_debug_message( $post_id, 'Not pushed - ' . $reason );
 		return;
 	}
 
