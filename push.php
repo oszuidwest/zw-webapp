@@ -10,7 +10,6 @@ defined( 'ABSPATH' ) || exit;
 // Runs after the post, its terms and its meta are stored, also for REST (block editor) saves.
 add_action( 'wp_after_insert_post', 'zw_webapp_schedule_push_notification', 10, 3 );
 add_action( 'send_push_notification', 'zw_webapp_call_api' );
-add_action( 'edit_form_top', 'zw_webapp_show_debug_message', 10, 1 );
 
 /**
  * Schedules a single push-notification cron event when a post is published.
@@ -21,6 +20,10 @@ add_action( 'edit_form_top', 'zw_webapp_show_debug_message', 10, 1 );
  * @return void
  */
 function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool $update ): void {
+	if ( 'post' !== $post->post_type ) {
+		return;
+	}
+
 	unset( $update );
 	if ( defined( 'WP_CLI' ) && WP_CLI && ! wp_doing_cron() ) {
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - Refusing to push on cli-triggered actions' );
@@ -34,10 +37,6 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 		return;
 	}
 
-	if ( 'post' !== $post->post_type ) {
-		zw_webapp_set_debug_message( $post_id, 'Not pushed - Not a post' );
-		return;
-	}
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - Doing autosave' );
 		return;
@@ -160,7 +159,7 @@ function zw_webapp_call_api( int $post_id ): void {
 }
 
 /**
- * Records a debug message on the post when push debug is enabled.
+ * Records a debug message for the options page when push debug is enabled.
  *
  * @param int    $post_id Post ID.
  * @param string $message Debug message.
@@ -172,34 +171,7 @@ function zw_webapp_set_debug_message( int $post_id, string $message ): void {
 		return;
 	}
 
-	add_post_meta( $post_id, 'zw_webapp_debug_msg', $message );
-}
-
-/**
- * Renders accumulated push debug messages above the post editor.
- *
- * @param WP_Post $post Post object.
- * @return void
- */
-function zw_webapp_show_debug_message( WP_Post $post ): void {
-	$messages = get_post_meta( $post->ID, 'zw_webapp_debug_msg', false );
-	if ( $messages ) {
-		?>
-		<div class="notice notice-info">
-			<p>
-			<?php
-			foreach ( $messages as $index => $message ) {
-				if ( $index > 0 ) {
-					echo '<br />';
-				}
-				echo esc_html( $message );
-			}
-			?>
-			</p>
-		</div>
-		<?php
-		delete_post_meta( $post->ID, 'zw_webapp_debug_msg' );
-	}
+	add_post_meta( $post_id, 'zw_webapp_debug_msg', wp_slash( current_time( 'mysql' ) . ' ' . $message ) );
 }
 
 /**

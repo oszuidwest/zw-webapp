@@ -116,6 +116,26 @@ function zw_webapp_options_page(): void {
 		?>
 	</form>
 	<?php
+	if ( empty( get_option( 'zw_webapp_settings' )['show_push_debug'] ) ) {
+		// Saving the settings redirects to this page, so switching push debug off there also deletes its messages.
+		delete_post_meta_by_key( 'zw_webapp_debug_msg' );
+		return;
+	}
+
+	global $wpdb;
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Debug list, only on this page while push debug is on.
+	$messages = $wpdb->get_results( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'zw_webapp_debug_msg' ORDER BY meta_id DESC LIMIT 50" );
+
+	echo '<h2>Push debug</h2><ul>';
+	foreach ( $messages as $message ) {
+		printf(
+			'<li><a href="%1$s">%2$s</a> %3$s</li>',
+			esc_url( admin_url( 'post.php?action=edit&post=' . $message->post_id ) ),
+			esc_html( '#' . $message->post_id . ' ' . get_the_title( (int) $message->post_id ) ),
+			esc_html( $message->meta_value )
+		);
+	}
+	echo '</ul>';
 }
 
 /**
