@@ -22,7 +22,7 @@ add_action( 'edit_form_top', 'zw_webapp_show_debug_message', 10, 1 );
  */
 function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool $update ): void {
 	unset( $update );
-	if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	if ( defined( 'WP_CLI' ) && WP_CLI && ! wp_doing_cron() ) {
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - Refusing to push on cli-triggered actions' );
 		return;
 	}
