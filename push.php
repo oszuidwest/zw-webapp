@@ -144,6 +144,8 @@ function zw_webapp_call_api( int $post_id ): void {
 				'Content-Type'  => 'application/json',
 			),
 			'body'    => wp_json_encode( $body_content ),
+			// A timeout can come after Progressier accepted the push, and a later save then sends it again.
+			'timeout' => 30,
 		)
 	);
 
