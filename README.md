@@ -19,7 +19,7 @@ The ZuidWest Webapp plugin seamlessly integrates the [Progressier PWA](https://p
 
 ## Integrating in Your Theme
 
-This plugin offers two filters: `zw_webapp_send_notification` determines whether a push notification is sent, defaulting to false. This means that **by default, push notifications are not triggered**. You can attach custom logic, a metabox, or an ACF field to control this behavior. The `zw_webapp_title` filter allows customization of the notification title, which defaults to 'Nieuws'. This filter can be overridden to display, for instance, your site's name or the post's category. Our integration details are available in [this commit](https://github.com/oszuidwest/streekomroep-wp/commit/2f47ef4d259b3826b7643653cb47a567833cd73a).
+This plugin offers two filters: `zw_webapp_send_notification` determines whether a push notification is sent, defaulting to false. This means that **by default, push notifications are not triggered**. You can attach custom logic, a metabox, or an ACF field to control this behavior. The filter runs on eligible post saves and is checked again before a queued push is sent, so use stored data such as post meta rather than relying on the current request or user. The `zw_webapp_title` filter allows customization of the notification title, which defaults to 'Nieuws'. This filter can be overridden to display, for instance, your site's name or the post's category. Our integration details are available in [this commit](https://github.com/oszuidwest/streekomroep-wp/commit/2f47ef4d259b3826b7643653cb47a567833cd73a).
 
 ## Usage
 
