@@ -171,7 +171,7 @@ function zw_webapp_set_debug_message( int $post_id, string $message ): void {
 		return;
 	}
 
-	add_post_meta( $post_id, 'zw_webapp_debug_msg', wp_slash( wp_date( 'Y-m-d H:i:s' ) . ' ' . $message ) );
+	add_post_meta( $post_id, 'zw_webapp_debug_msg', wp_slash( current_time( 'mysql' ) . ' ' . $message ) );
 }
 
 /**

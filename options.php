@@ -117,7 +117,7 @@ function zw_webapp_options_page(): void {
 	</form>
 	<?php
 	if ( empty( get_option( 'zw_webapp_settings' )['show_push_debug'] ) ) {
-		// Saving the settings also ends here, so switching push debug off clears its messages.
+		// Saving the settings redirects to this page, so switching push debug off there also deletes its messages.
 		delete_post_meta_by_key( 'zw_webapp_debug_msg' );
 		return;
 	}
