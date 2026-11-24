@@ -105,6 +105,15 @@ function zw_webapp_call_api( int $post_id ): void {
 		return;
 	}
 
+	// The post can be unpublished or deleted after scheduling. Read it fresh: an earlier event in this cron run may have it cached.
+	wp_cache_delete( $post_id, 'posts' );
+	if ( 'publish' !== get_post_status( $post_id ) ) {
+		// Lets a later publish queue the push again.
+		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
+		zw_webapp_set_debug_message( $post_id, 'Not pushed - Post no longer published' );
+		return;
+	}
+
 	// Restarts the marker's ten minutes, so a save during this send doesn't queue it again.
 	update_post_meta( $post_id, '_zw_webapp_push_queued', time() );
 
