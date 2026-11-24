@@ -58,13 +58,13 @@ function zw_webapp_dashboard_widget_display(): void {
 
 			$time                = get_the_time( 'U' );
 			$formatted_date_time = date_i18n( 'j M, H:i', $time );
-			$post_edit_link      = get_edit_post_link();
+			$post_link           = get_edit_post_link() ?? get_permalink(); // The edit link is null for users who can't edit the post.
 			$post_title          = get_the_title();
 
 			printf(
 				'<li><span>%1$s</span> <a href="%2$s">%3$s</a></li>',
 				esc_html( $formatted_date_time ),
-				esc_url( $post_edit_link ),
+				esc_url( $post_link ),
 				esc_html( $post_title )
 			);
 		}
