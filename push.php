@@ -49,6 +49,10 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - Push already sent' );
 		return;
 	}
+	if ( ! zw_webapp_is_configured() ) {
+		zw_webapp_set_debug_message( $post_id, 'Not pushed - Progressier ID or authorization token not set' );
+		return;
+	}
 
 	// Stored on the post, so a later save still sees it while cron is sending the push.
 	if ( ! add_post_meta( $post_id, '_zw_webapp_push_queued', time(), true ) ) {
@@ -72,6 +76,16 @@ function zw_webapp_schedule_push_notification( int $post_id, WP_Post $post, bool
 	}
 
 	zw_webapp_set_debug_message( $post_id, 'Push notification scheduled' );
+}
+
+/**
+ * Returns whether the settings needed to send a push are filled in.
+ *
+ * @return bool True when the Progressier ID and the authorization token are set.
+ */
+function zw_webapp_is_configured(): bool {
+	$settings = get_option( 'zw_webapp_settings' );
+	return ! empty( $settings['progressier_id'] ) && ! empty( $settings['auth_token'] );
 }
 
 /**
@@ -117,6 +131,13 @@ function zw_webapp_call_api( int $post_id ): void {
 		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
 		$reason = $published ? 'Filter zw_webapp_send_notification returned false when sending' : 'Post no longer published';
 		zw_webapp_set_debug_message( $post_id, 'Not pushed - ' . $reason );
+		return;
+	}
+
+	// The settings can be removed after scheduling.
+	if ( ! zw_webapp_is_configured() ) {
+		delete_post_meta( $post_id, '_zw_webapp_push_queued' );
+		zw_webapp_set_debug_message( $post_id, 'Not pushed - Progressier ID or authorization token not set when sending' );
 		return;
 	}
 
