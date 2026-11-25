@@ -29,7 +29,15 @@ add_action( 'admin_menu', 'zw_webapp_add_admin_menu' );
  * @return void
  */
 function zw_webapp_settings_init(): void {
-	register_setting( 'pluginPage', 'zw_webapp_settings', array( 'sanitize_callback' => 'zw_webapp_validate_settings' ) );
+	register_setting(
+		'pluginPage',
+		'zw_webapp_settings',
+		array(
+			'type'              => 'array',
+			'default'           => array(),
+			'sanitize_callback' => 'zw_webapp_validate_settings',
+		)
+	);
 
 	add_settings_section(
 		'zw_webapp_pluginPage_section',
