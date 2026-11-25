@@ -30,7 +30,7 @@ add_action( 'admin_menu', 'zw_webapp_add_admin_menu' );
  */
 function zw_webapp_settings_init(): void {
 	register_setting(
-		'pluginPage',
+		'zw_webapp',
 		'zw_webapp_settings',
 		array(
 			'type'              => 'array',
@@ -43,7 +43,7 @@ function zw_webapp_settings_init(): void {
 		'zw_webapp_pluginPage_section',
 		__( 'ZuidWest Webapp Settings', 'zw-webapp' ),
 		'zw_webapp_settings_section_callback',
-		'pluginPage'
+		'zw_webapp'
 	);
 
 	// Fields for the settings.
@@ -59,7 +59,7 @@ function zw_webapp_settings_init(): void {
 			$field[0],
 			$field[1],
 			'zw_webapp_settings_field_callback',
-			'pluginPage',
+			'zw_webapp',
 			'zw_webapp_pluginPage_section',
 			array( 'id' => $field[0] )
 		);
@@ -118,8 +118,8 @@ function zw_webapp_options_page(): void {
 	<form action='options.php' method='post'>
 		<h2>ZuidWest Webapp</h2>
 		<?php
-		settings_fields( 'pluginPage' );
-		do_settings_sections( 'pluginPage' );
+		settings_fields( 'zw_webapp' );
+		do_settings_sections( 'zw_webapp' );
 		submit_button();
 		?>
 	</form>
